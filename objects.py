@@ -22,6 +22,10 @@ class Position(Enum):
     Tunnel = 5
     Bridge = 6
     Factory = 7
+    Habour = 8
+    Train = 9
+    Toll = 10
+    Fuel = 11
 
 # Engine status: 0 Not Started, 1 Electric Started, 2 Engine Started
 # Turn signal: 0 Off, 1 Left, 2 Right, 3 Emergency
