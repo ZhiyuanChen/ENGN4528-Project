@@ -1,42 +1,14 @@
-from enum import Enum, unique
-
-
-@unique
-class Period(Enum):
-    NotSet = 0
-    Spring = 1
-    Morning = 2
-    Noon = 3
-    Afternoon = 4
-    Fall = 5
-    Evening = 6
-
-
-@unique
-class Position(Enum):
-    NotSet = 0
-    HighSpeed = 1
-    State = 2
-    City = 3
-    Rural = 4
-    Tunnel = 5
-    Bridge = 6
-    Factory = 7
-    Habour = 8
-    Train = 9
-    Toll = 10
-    Fuel = 11
-
-# Engine status: 0 Not Started, 1 Electric Started, 2 Engine Started
-# Turn signal: 0 Off, 1 Left, 2 Right, 3 Emergency
-# Parking Brake
-# Brake
-# Light
-# Odometer
-# Fuel gauge
+from objects import Position, Period
 
 
 class Truck(object):
+    # Engine status: 0 Not Started, 1 Electric Started, 2 Engine Started
+    # Turn signal: 0 Off, 1 Left, 2 Right, 3 Emergency
+    # Parking Brake
+    # Brake
+    # Light
+    # Odometer
+    # Fuel gauge
     def __init__(self, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
                  speed_limit=0, navigation=0, position=Position.NotSet, period=Period.NotSet):
         self._EngineStatus = engine_status
