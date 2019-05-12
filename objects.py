@@ -37,7 +37,8 @@ class Position(Enum):
 
 
 class Truck(object):
-    def __init__(self, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0, speed_limit=0, navigation=0, position=Position.NotSet, period=Period.NotSet):
+    def __init__(self, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
+                 speed_limit=0, navigation=0, position=Position.NotSet, period=Period.NotSet):
         self._EngineStatus = engine_status
         self._TurnSignal = turn_signal
         self._ParkingBrake = parking_brake
