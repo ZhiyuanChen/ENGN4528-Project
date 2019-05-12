@@ -26,5 +26,5 @@ class Image(object):
         self.failure2 = image[682:693, 670:688]
         self.failure3 = image[682:693, 693:712]
 
-    def windshield(self):
+    def windshield_json(self):
         return {'w': self.windshield}
