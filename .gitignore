@@ -350,3 +350,8 @@ healthchecksdb
 *.docx
 *.pdf
 *.zip
+
+# ENGN4528
+images/
+videos/
+logs/
