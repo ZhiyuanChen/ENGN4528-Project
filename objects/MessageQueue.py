@@ -35,6 +35,6 @@ class MessageQueue(object):
         self.channel.queue_declare(queue=SIGN_REQUEST, durable=MQ_DURABLE)
         self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
 
-    def publish_to_queue(self, routing_key, response_message):
+    def publish(self, routing_key, response_message):
         self.channel.basic_publish(exchange='', routing_key=routing_key, body=response_message,
                                    properties=pika.BasicProperties(delivery_mode=MQ_MODE))

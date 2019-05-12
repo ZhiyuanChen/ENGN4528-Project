@@ -1,40 +1,55 @@
-import cv2
 import numpy as np
 from mss import mss
-from objects import Image
+import os
+import configparser
+import time
+from objects.Log import Log
+from objects.MessageQueue import MessageQueue
+from objects.Message import Message
+from objects.Image import Image
+from concurrent import futures
 
 
-def capture():
-    return np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720}))
+CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
+CONFIG = configparser.RawConfigParser()
+CONFIG.read(CONFIG_PATH)
+MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
+LANE_REQUEST = CONFIG.get('Message Queue', 'Lane Request Queue')
+OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
+SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
 
 
-while(True):
-    image = Image.Image(capture())
-    cv2.imshow('image', image.windshield)
-    cv2.imwrite('images/image.jpg', image.image)
-    cv2.imwrite('images/windshield.jpg', image.windshield)
-    cv2.imwrite('images/left_mirror.jpg', image.left_mirror)
-    cv2.imwrite('images/right_mirror.jpg', image.right_mirror)
-    cv2.imwrite('images/navigation.jpg', image.navigation)
-    cv2.imwrite('images/assistant.jpg', image.assistant)
-    cv2.imwrite('images/odometer.jpg', image.odometer)
-    cv2.imwrite('images/fuel_gauge.jpg', image.fuel_gauge)
-    cv2.imwrite('images/left_turn.jpg', image.left_turn)
-    cv2.imwrite('images/right_turn.jpg', image.right_turn)
-    cv2.imwrite('images/parking_break.jpg', image.parking_break)
-    cv2.imwrite('images/seat_belt.jpg', image.seat_belt)
-    cv2.imwrite('images/battery_charge.jpg', image.battery_charge)
-    cv2.imwrite('images/malfunction_indicator.jpg', image.malfunction_indicator)
-    cv2.imwrite('images/glow_plug.jpg', image.glow_plug)
-    cv2.imwrite('images/light0.jpg', image.light0)
-    cv2.imwrite('images/light1.jpg', image.light1)
-    cv2.imwrite('images/light2.jpg', image.light2)
-    cv2.imwrite('images/light3.jpg', image.light3)
-    cv2.imwrite('images/light4.jpg', image.light4)
-    cv2.imwrite('images/light5.jpg', image.light5)
-    cv2.imwrite('images/failure0.jpg', image.failure0)
-    cv2.imwrite('images/failure1.jpg', image.failure1)
-    cv2.imwrite('images/failure2.jpg', image.failure2)
-    cv2.imwrite('images/failure3.jpg', image.failure3)
-    cv2.waitKey(0)
+class Capture(object):
+    def __init__(self):
+        self.log = Log('capture')
+        self.mq = MessageQueue()
+        self.routing_key_list = [LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST]
+        self.threadpool = futures.ThreadPoolExecutor(max_workers=MAX_WORKER)
 
+    def capture(self):
+        return np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720}))
+
+    def publish(self, routing_key, image):
+        self.mq.publish(routing_key, Message(200, 'success', image.windshield()).json())
+
+    def publish_concurrent(self, image):
+        try:
+            [self.threadpool.submit(self.publish, routing_key, image) for routing_key in self.routing_key_list]
+        except Exception as err:
+            self.log.error(err)
+            raise Exception(824, '试卷下载失败')
+
+    def process(self):
+        t = time.time()
+        image = Image(self.capture())
+        self.publish_concurrent(image)
+        print(time.time()-t)
+
+def main():
+    capture = Capture()
+    while(True):
+        capture.process()
+
+
+if __name__ == "__main__":
+    main()
