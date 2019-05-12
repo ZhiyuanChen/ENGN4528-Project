@@ -1,5 +1,18 @@
 import logging
 import logging.handlers
+import os
+import configparser
+
+CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
+CONFIG = configparser.RawConfigParser()
+CONFIG.read(CONFIG_PATH)
+# Initial global variables for log
+LOG_FILE = os.path.join(os.getcwd(), 'logs',  CONFIG.get('Log', 'File'))
+LOG_LVL = CONFIG.get('Log', 'Level')
+LOG_WHEN = CONFIG.get('Log', 'When')
+LOG_INTV = CONFIG.getint('Log', 'Interval')
+LOG_MAXC = CONFIG.getint('Log', 'Max Counter')
+LOG_FMT = CONFIG.get('Log', 'Format')
 
 
 class Log(object):

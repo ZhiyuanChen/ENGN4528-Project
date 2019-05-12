@@ -1,4 +1,5 @@
-from objects import Position, Period
+from .Position import Position
+from .Period import Period
 
 
 class Truck(object):
