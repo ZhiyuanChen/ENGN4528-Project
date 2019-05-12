@@ -1,14 +1,15 @@
-import numpy as np
-from mss import mss
-import os
 import configparser
+import os
 import time
-from objects.Log import Log
-from objects.MessageQueue import MessageQueue
-from objects.Message import Message
-from objects.Image import Image
 from concurrent import futures
 
+import numpy as np
+from mss import mss
+
+from objects.Image import Image
+from objects.Log import Log
+from objects.Message import Message
+from objects.MessageQueue import MessageQueue
 
 CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
 CONFIG = configparser.RawConfigParser()
