@@ -1,19 +1,13 @@
+import sys
+
 import cv2
 import numpy as np
-import configparser
-import os
-import sys
-sys.path.append("..")
+
+from globals import load_message, OBST_REQUEST, PREFETCH_NUM
 from objects.Log import Log
 from objects.MessageQueue import MessageQueue
-from global_functions import load_message
 
-
-CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
-CONFIG = configparser.RawConfigParser()
-CONFIG.read(CONFIG_PATH)
-OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
-PREFETCH_NUM = int(CONFIG.get('Concurrency', 'Consume Number'))
+sys.path.append("..")
 
 
 class Master(object):
