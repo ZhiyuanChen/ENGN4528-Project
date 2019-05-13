@@ -1,3 +1,6 @@
+import cv2
+
+
 class Image(object):
     def __init__(self, image):
         self.image = image
@@ -26,5 +29,5 @@ class Image(object):
         self.failure2 = image[682:693, 670:688]
         self.failure3 = image[682:693, 693:712]
 
-    def windshield_json(self):
-        return {'w': self.windshield}
+    def message(self):
+        return cv2.imencode('.jpg', self.windshield)[1]

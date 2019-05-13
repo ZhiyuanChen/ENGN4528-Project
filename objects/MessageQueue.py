@@ -3,6 +3,8 @@ import os
 
 import pika
 
+from .Log import Log
+
 # Read configuration file
 CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
 CONFIG = configparser.RawConfigParser()
@@ -35,7 +37,9 @@ class MessageQueue(object):
         self.channel.queue_declare(queue=OBST_RESPONSE, durable=MQ_DURABLE)
         self.channel.queue_declare(queue=SIGN_REQUEST, durable=MQ_DURABLE)
         self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
+        self.log = Log('message_queue')
 
-    def publish(self, routing_key, message):
+    def publish(self, queue, message):
         self.channel.basic_publish(
-            exchange='', routing_key=routing_key, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
+            exchange='', routing_key=queue, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
+        self.log.info(queue + ' published ' + message)

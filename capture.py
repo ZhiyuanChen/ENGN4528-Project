@@ -24,24 +24,23 @@ class Capture(object):
     def __init__(self):
         self.log = Log('capture')
         self.mq = MessageQueue()
-        self.routing_key_list = [LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST]
+        self.queue_list = [LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST]
         self.thread_pool = futures.ThreadPoolExecutor(max_workers=MAX_WORKER)
         self.screen_shot = None
 
     def capture(self):
         self.screen_shot = Image(np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720})))
 
-    def publish(self, routing_key, data):
-        self.mq.publish(routing_key, Message(200, 'success', data))
+    def publish(self, queue, data):
+        self.mq.publish(queue, Message(200, 'success', data).json())
 
     def publish_concurrent(self):
-        windshield_json = self.screen_shot.windshield_json()
+        data = self.screen_shot.message()
+        # image = cv2.imdecode(np.fromstring(windshield_json, np.uint8), 1)
         try:
-            for routing_key in self.routing_key_list:
-                self.thread_pool.submit(self.publish, routing_key, windshield_json)
+            [self.thread_pool.submit(self.publish, queue, data) for queue in self.queue_list]
         except Exception as err:
             self.log.error(err)
-            raise Exception(824, '试卷下载失败')
 
     def process(self):
         t = time.time()
