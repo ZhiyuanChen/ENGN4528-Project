@@ -15,9 +15,10 @@ class Master(object):
         self.log = Log('sign_request')
         self.mq = MessageQueue()
         self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
-        self.mq.channel.basic_consume(self.receive, queue=SIGN_REQUEST)
+        self.mq.channel.basic_consume(queue=SIGN_REQUEST, on_message_callback=self.receive)
         self.log.info('------------------------------------')
-        self.log.info('HOST: ' + self.mq.host() + 'PORT: ' + str(self.mq.port()) + 'QUEUE: ' + SIGN_REQUEST + 'Ready to consume')
+        self.log.info('HOST: ' + self.mq.host() + ' PORT: ' + str(
+            self.mq.port()) + ' QUEUE: ' + SIGN_REQUEST + ' Ready to consume')
         self.log.info('------------------------------------')
         self.mq.channel.start_consuming()
 

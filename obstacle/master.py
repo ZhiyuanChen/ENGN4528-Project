@@ -15,9 +15,10 @@ class Master(object):
         self.log = Log('obstacle_request')
         self.mq = MessageQueue()
         self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
-        self.mq.channel.basic_consume(self.receive, queue=OBST_REQUEST)
+        self.mq.channel.basic_consume(queue=OBST_REQUEST, on_message_callback=self.receive)
         self.log.info('------------------------------------')
-        self.log.info('HOST: ' + self.mq.host() + 'PORT: ' + str(self.mq.port()) + 'QUEUE: ' + OBST_REQUEST + 'Ready to consume')
+        self.log.info('HOST: ' + self.mq.host() + ' PORT: ' + str(
+            self.mq.port()) + ' QUEUE: ' + OBST_REQUEST + ' Ready to consume')
         self.log.info('------------------------------------')
         self.mq.channel.start_consuming()
 
