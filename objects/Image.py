@@ -30,4 +30,4 @@ class Image(object):
         self.failure3 = image[682:693, 693:712]
 
     def message(self):
-        return cv2.imencode('.jpg', self.windshield)[1]
+        return {'windshield': cv2.imencode('.jpg', self.windshield)[1]}

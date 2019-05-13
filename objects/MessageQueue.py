@@ -43,3 +43,9 @@ class MessageQueue(object):
         self.channel.basic_publish(
             exchange='', routing_key=queue, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
         self.log.info(queue + ' published ' + message)
+
+    def host(self):
+        return MQ_HOST
+
+    def port(self):
+        return MQ_PORT

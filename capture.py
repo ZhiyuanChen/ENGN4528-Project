@@ -36,7 +36,6 @@ class Capture(object):
 
     def publish_concurrent(self):
         data = self.screen_shot.message()
-        # image = cv2.imdecode(np.fromstring(windshield_json, np.uint8), 1)
         try:
             [self.thread_pool.submit(self.publish, queue, data) for queue in self.queue_list]
         except Exception as err:
