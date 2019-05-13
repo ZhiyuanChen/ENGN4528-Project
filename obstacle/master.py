@@ -1,13 +1,9 @@
-import sys
-
 import cv2
 import numpy as np
 
 from globals import load_message, OBST_REQUEST, PREFETCH_NUM
 from objects.Log import Log
 from objects.MessageQueue import MessageQueue
-
-sys.path.append("..")
 
 
 class Master(object):
@@ -31,3 +27,11 @@ class Master(object):
             windshield = cv2.imdecode(np.fromstring(image_dict['windshield'], np.uint8), 1)
         except Exception:
             pass
+
+
+def main():
+    master = Master()
+
+
+if __name__ == "__main__":
+    main()
