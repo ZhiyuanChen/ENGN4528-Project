@@ -50,3 +50,9 @@ def get_queue(queue):
             raise Exception
     except Exception:
         pass
+
+
+class CVException(Exception):
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
