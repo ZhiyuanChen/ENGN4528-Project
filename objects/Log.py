@@ -6,7 +6,7 @@ from globals import *
 
 class Log(object):
     def __init__(self, file=CONFIG.get('Log', 'File')):
-        log_file = os.path.join(os.getcwd(), 'logs', file)
+        log_file = os.path.join(LOG_DIR, file)
         logging.basicConfig()
         self.logger = logging.getLogger()
         self.logger.setLevel(LOG_LVL)

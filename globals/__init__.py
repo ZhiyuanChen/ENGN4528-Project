@@ -3,10 +3,11 @@ import json
 import os
 
 # Initial global variable for config
-CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
+CONFIG_PATH = os.path.join(os.path.dirname(os.getcwd()), 'config.ini')
 CONFIG = configparser.RawConfigParser()
 CONFIG.read(CONFIG_PATH)
 # Initial global variables for log
+LOG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'logs')
 LOG_LVL = CONFIG.get('Log', 'Level')
 LOG_WHEN = CONFIG.get('Log', 'When')
 LOG_INTV = CONFIG.getint('Log', 'Interval')
