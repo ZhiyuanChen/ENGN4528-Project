@@ -1,8 +1,10 @@
+import base64
 import configparser
 import json
 import logging
 import logging.handlers
 import os
+
 import cv2
 import numpy as np
 import pika
@@ -42,9 +44,16 @@ MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 def load_message(message):
     try:
         message = json.loads(message)
+        return message['code'], message['msg'], message['data']
     except Exception:
         pass
-    return message['code'], message['message'], message['data']
+
+
+def load_image(string):
+    try:
+        return cv2.imdecode(np.frombuffer(base64.b64decode(string), dtype=np.uint8), flags=1)
+    except Exception:
+        pass
 
 
 def get_queue(queue):
@@ -71,7 +80,7 @@ class Master(object):
         self.log.info('---------------------------------------')
 
     def receive(self, ch, method, props, body):
-        self.log.info('Received message')
+        self.log.info('Received message from ' + method.routing_key)
         try:
             code, message, image = load_message(body)
             if code != 200:

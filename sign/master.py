@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from globals import load_message, SIGN_REQUEST, Master
+from globals import Master, load_message, load_image, SIGN_REQUEST
 
 
 class SignMaster(Master):
@@ -11,12 +11,12 @@ class SignMaster(Master):
         self.mq.channel.start_consuming()
 
     def receive(self, ch, method, props, body):
-        self.log.info('************ Received Request ************')
+        self.log.info('Received message from ' + method.routing_key)
         try:
-            code, message, image_dict = load_message(body)
+            code, message, data = load_message(body)
             if code != 200:
                 raise Exception
-            windshield = cv2.imdecode(np.fromstring(image_dict['windshield'], np.uint8), 1)
+            image = load_image(data)
         except Exception:
             pass
 
