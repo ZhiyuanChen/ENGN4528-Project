@@ -1,4 +1,4 @@
-from globals import Master, load_message, load_image, COMP_REQUEST
+from globals import Master, Vernie, traceback, load_message, load_image, COMP_REQUEST
 
 
 class CompMaster(Master):
@@ -12,7 +12,17 @@ class CompMaster(Master):
         try:
             code, message, data = load_message(body)
             if code != 200:
-                raise Exception
+                raise Vernie(300, 'Illegal message')
             image = load_image(data)
+        except Vernie:
+            raise Vernie(300, 'Illegal message')
         except Exception:
-            pass
+            raise Vernie(301, 'Failed to receive message', traceback.format_exc())
+
+
+def main():
+    master = CompMaster()
+
+
+if __name__ == "__main__":
+    main()

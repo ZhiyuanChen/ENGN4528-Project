@@ -4,6 +4,7 @@ import json
 import logging
 import logging.handlers
 import os
+import traceback
 
 import cv2
 import numpy as np
@@ -46,28 +47,14 @@ def load_message(message):
         message = json.loads(message)
         return message['code'], message['msg'], message['data']
     except Exception:
-        pass
+        raise Vernie(306, 'Failed to load message', traceback.format_exc())
 
 
 def load_image(string):
     try:
         return cv2.imdecode(np.frombuffer(base64.b64decode(string), dtype=np.uint8), flags=1)
     except Exception:
-        pass
-
-
-def get_queue(queue):
-    try:
-        if queue == 'lane':
-            return LANE_REQUEST
-        elif queue == 'obstacle':
-            return OBST_REQUEST
-        elif queue == 'sign':
-            return SIGN_REQUEST
-        else:
-            raise Exception
-    except Exception:
-        pass
+        raise Vernie(307, 'Failed to load image', traceback.format_exc())
 
 
 class Master(object):
@@ -84,11 +71,12 @@ class Master(object):
         try:
             code, message, image = load_message(body)
             if code != 200:
-                raise Exception
+                raise Vernie(300, 'Illegal message')
             windshield = cv2.imdecode(np.fromstring(image, np.uint8), 1)
-
+        except Vernie:
+            raise Vernie(300, 'Illegal message')
         except Exception:
-            pass
+            raise Vernie(301, 'Failed to receive message', traceback.format_exc())
 
 
 class Message(object):
@@ -148,7 +136,8 @@ class Log(object):
         self.logger.error(message)
 
 
-class CVException(Exception):
-    def __init__(self, code, message):
+class Vernie(Exception):
+    def __init__(self, code, message, detail=None):
         self.code = code
         self.message = message
+        self.detail = detail
