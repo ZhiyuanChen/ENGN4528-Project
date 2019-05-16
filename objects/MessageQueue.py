@@ -5,25 +5,18 @@ from .Log import Log
 
 
 class MessageQueue(object):
-    def __init__(self):
+    def __init__(self, channel):
+        self.channel = channel
+        self.host = MQ_HOST
+        self.port = MQ_PORT
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host=MQ_HOST, port=MQ_PORT, virtual_host=MQ_VHOST, credentials=pika.PlainCredentials(MQ_USNM, MQ_PSWD)))
+            host=self.host, port=self.port, virtual_host=MQ_VHOST, credentials=pika.PlainCredentials(MQ_USNM, MQ_PSWD)))
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=LANE_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=LANE_RESPONSE, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=OBST_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=OBST_RESPONSE, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=SIGN_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=self.channel, durable=MQ_DURABLE)
         self.log = Log('message_queue')
 
-    def publish(self, queue, message):
+    def publish(self, message):
         self.channel.basic_publish(
-            exchange='', routing_key=queue, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
-        self.log.info(queue + ' published ' + message)
+            exchange='', routing_key=self.channel, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
+        self.log.info(self.queue + ' published ' + message)
 
-    def host(self):
-        return MQ_HOST
-
-    def port(self):
-        return MQ_PORT

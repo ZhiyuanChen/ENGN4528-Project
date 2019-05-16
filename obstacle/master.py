@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from globals import load_message, OBST_REQUEST, Master
+from globals import Master, load_message, OBST_REQUEST
 
 
 class ObstMaster(Master):
