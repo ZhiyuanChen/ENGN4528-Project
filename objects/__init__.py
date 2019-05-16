@@ -1,4 +1,5 @@
 import cv2
+import base64
 from enum import Enum, unique
 
 
@@ -29,9 +30,7 @@ class Image(object):
         self.failure1 = image[682:694, 647:665]
         self.failure2 = image[682:693, 670:688]
         self.failure3 = image[682:693, 693:712]
-
-    def message(self):
-        return {'windshield': cv2.imencode('.jpg', self.windshield)[1]}
+        self.message = base64.b64encode(cv2.imencode('.jpg', self.image)[1]).decode('ascii')
 
 
 @unique
