@@ -1,30 +1,18 @@
-import configparser
-import os
 import time
 from concurrent import futures
 
 import numpy as np
 from mss import mss
 
-from objects.Image import Image
-from objects.Log import Log
-from objects.Message import Message
-from objects.MessageQueue import MessageQueue
-
-CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
-CONFIG = configparser.RawConfigParser()
-CONFIG.read(CONFIG_PATH)
-MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
-LANE_REQUEST = CONFIG.get('Message Queue', 'Lane Request Queue')
-OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
-SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
+from objects import Image
+from globals import Message, MessageQueue, Log, MAX_WORKER, COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST
 
 
 class Capture(object):
     def __init__(self):
         self.log = Log('capture')
         self.mq = MessageQueue()
-        self.queue_list = [LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST]
+        self.queue_list = [COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST]
         self.thread_pool = futures.ThreadPoolExecutor(max_workers=MAX_WORKER)
         self.screen_shot = None
 

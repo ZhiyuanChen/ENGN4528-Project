@@ -1,25 +1,13 @@
-import sys
-
 import cv2
 import numpy as np
 
-from globals import load_message, SIGN_REQUEST, PREFETCH_NUM
-from objects.Log import Log
-from objects.MessageQueue import MessageQueue
-
-sys.path.append("..")
+from globals import load_message, SIGN_REQUEST, Master
 
 
-class Master(object):
+class SignMaster(Master):
     def __init__(self):
-        self.log = Log('sign_request')
-        self.mq = MessageQueue()
-        self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
+        super(SignMaster, self).__init__(SIGN_REQUEST)
         self.mq.channel.basic_consume(queue=SIGN_REQUEST, on_message_callback=self.receive)
-        self.log.info('------------------------------------')
-        self.log.info('HOST: ' + self.mq.host() + ' PORT: ' + str(
-            self.mq.port()) + ' QUEUE: ' + SIGN_REQUEST + ' Ready to consume')
-        self.log.info('------------------------------------')
         self.mq.channel.start_consuming()
 
     def receive(self, ch, method, props, body):
@@ -31,3 +19,11 @@ class Master(object):
             windshield = cv2.imdecode(np.fromstring(image_dict['windshield'], np.uint8), 1)
         except Exception:
             pass
+
+
+def main():
+    master = Master()
+
+
+if __name__ == "__main__":
+    main()
