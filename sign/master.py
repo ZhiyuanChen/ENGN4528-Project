@@ -1,4 +1,4 @@
-from globals import Master, Vernie, traceback, load_message, load_image, SIGN_REQUEST
+from globals import Master, load_message, load_image, SIGN_REQUEST
 
 
 class SignMaster(Master):
@@ -14,10 +14,8 @@ class SignMaster(Master):
             if code != 200:
                 raise Exception
             image = load_image(data)
-        except Vernie:
-            raise Vernie(300, 'Illegal message')
-        except Exception:
-            raise Vernie(301, 'Failed to receive message', traceback.format_exc())
+        except Exception as e:
+            self.log.error(e)
 
 
 def main():

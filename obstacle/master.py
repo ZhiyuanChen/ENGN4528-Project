@@ -1,4 +1,4 @@
-from globals import Master, Vernie, traceback, load_message, load_image, OBST_REQUEST
+from globals import Master, Vernie, load_message, load_image, OBST_REQUEST
 
 
 class ObstMaster(Master):
@@ -14,10 +14,8 @@ class ObstMaster(Master):
             if code != 200:
                 raise Vernie(300, 'Illegal message')
             image = load_image(data)
-        except Vernie:
-            raise Vernie(300, 'Illegal message')
-        except Exception:
-            raise Vernie(301, 'Failed to receive message', traceback.format_exc())
+        except Exception as e:
+            self.log.error(e)
 
 
 def main():
