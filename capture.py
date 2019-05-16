@@ -1,5 +1,3 @@
-import configparser
-import os
 import time
 from concurrent import futures
 
@@ -7,11 +5,8 @@ import numpy as np
 from mss import mss
 
 from objects.Image import Image
-from objects.Log import Log
+from globals import MessageQueue, Log, MAX_WORKER, COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST
 from objects.Message import Message
-from objects.MessageQueue import MessageQueue
-
-from globals import MAX_WORKER, COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST
 
 
 class Capture(object):

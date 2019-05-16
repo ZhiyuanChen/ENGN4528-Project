@@ -1,7 +1,6 @@
 import time
 import traceback
-from objects.Log import Log
-from objects.MessageQueue import MessageQueue
+from globals import MessageQueue, Log
 from objects.Message import Message
 from objects.Image import Image
 from objects.Truck import Truck

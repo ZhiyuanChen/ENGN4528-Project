@@ -1,26 +1,25 @@
 import configparser
 import json
+import logging
+import logging.handlers
 import os
 
 import cv2
 import numpy as np
-
-from objects.Log import Log
-from objects.MessageQueue import MessageQueue
+import pika
 
 # Initial global variable for config
-CONFIG_PATH = os.path.join(os.path.dirname(os.getcwd()), 'config.ini')
+CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
 CONFIG = configparser.RawConfigParser()
 CONFIG.read(CONFIG_PATH)
 # Initial global variables for log
-LOG_DIR = os.path.join(os.path.dirname(os.getcwd()), 'logs')
+LOG_DIR = os.path.join(os.getcwd(), 'logs')
 LOG_LVL = CONFIG.get('Log', 'Level')
 LOG_WHEN = CONFIG.get('Log', 'When')
 LOG_INTV = CONFIG.getint('Log', 'Interval')
 LOG_MAXC = CONFIG.getint('Log', 'Max Counter')
 LOG_FMT = CONFIG.get('Log', 'Format')
 # Initial global variables for message queue
-PREFETCH_NUM = int(CONFIG.get('Concurrency', 'Consume Number'))
 MQ_HOST = CONFIG.get('Message Queue', 'Host')
 MQ_PORT = CONFIG.getint('Message Queue', 'Port')
 MQ_VHOST = CONFIG.get('Message Queue', 'Virtual Host')
@@ -36,6 +35,8 @@ OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
 OBST_RESPONSE = CONFIG.get('Message Queue', 'Obstacle Response Queue')
 SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
 SIGN_RESPONSE = CONFIG.get('Message Queue', 'Sign Response Queue')
+# Initial global variables for concurrency
+PREFETCH_NUM = int(CONFIG.get('Concurrency', 'Consume Number'))
 MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 
 
@@ -80,6 +81,50 @@ class Master(object):
 
         except Exception:
             pass
+
+
+class MessageQueue(object):
+    def __init__(self):
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host=MQ_HOST, port=MQ_PORT, virtual_host=MQ_VHOST, credentials=pika.PlainCredentials(MQ_USNM, MQ_PSWD)))
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue=LANE_REQUEST, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=LANE_RESPONSE, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=OBST_REQUEST, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=OBST_RESPONSE, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=SIGN_REQUEST, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
+        self.log = Log('message_queue')
+
+    def publish(self, queue, message):
+        self.channel.basic_publish(
+            exchange='', routing_key=queue, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
+        self.log.info(queue + ' published ' + message)
+
+    def host(self):
+        return MQ_HOST
+
+    def port(self):
+        return MQ_PORT
+
+
+class Log(object):
+    def __init__(self, file=CONFIG.get('Log', 'File')):
+        log_file = os.path.join(LOG_DIR, file)
+        logging.basicConfig()
+        self.logger = logging.getLogger()
+        self.logger.setLevel(LOG_LVL)
+        self.handler = logging.handlers.TimedRotatingFileHandler(filename=log_file, when=LOG_WHEN, interval=LOG_INTV)
+        self.handler.suffix = '%Y-%m-%d.log'
+        self.handler.setLevel(LOG_LVL)
+        self.handler.setFormatter(logging.Formatter(LOG_FMT))
+        self.logger.addHandler(self.handler)
+
+    def info(self, message):
+        self.logger.info(message)
+
+    def error(self, message):
+        self.logger.error(message)
 
 
 class CVException(Exception):
