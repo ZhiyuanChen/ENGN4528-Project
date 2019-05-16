@@ -23,9 +23,12 @@ class Capture(object):
         self.mq.publish(queue, Message(200, 'success', data).json())
 
     def publish_concurrent(self):
-        data = self.screen_shot.message()
+        data = self.screen_shot.message
         try:
-            [self.thread_pool.submit(self.publish, queue, data) for queue in self.queue_list]
+            self.publish(COMP_REQUEST, data)
+            self.publish(LANE_REQUEST, data)
+            self.publish(OBST_REQUEST, data)
+            self.publish(SIGN_REQUEST, data)
         except Exception as err:
             self.log.error(err)
 

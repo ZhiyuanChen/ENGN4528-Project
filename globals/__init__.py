@@ -3,17 +3,17 @@ import json
 import logging
 import logging.handlers
 import os
-
+import uuid
 import cv2
 import numpy as np
 import pika
 
 # Initial global variable for config
-CONFIG_PATH = os.path.join(os.getcwd(), 'config.ini')
+CONFIG_PATH = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'config.ini')
 CONFIG = configparser.RawConfigParser()
 CONFIG.read(CONFIG_PATH)
 # Initial global variables for log
-LOG_DIR = os.path.join(os.getcwd(), 'logs')
+LOG_DIR = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'logs')
 LOG_LVL = CONFIG.get('Log', 'Level')
 LOG_WHEN = CONFIG.get('Log', 'When')
 LOG_INTV = CONFIG.getint('Log', 'Interval')
@@ -67,12 +67,12 @@ class Master(object):
         self.log = Log(channel)
         self.mq = MessageQueue()
         self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
-        self.log.info('------------------------------------')
+        self.log.info('---------------------------------------')
         self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
-        self.log.info('------------------------------------')
+        self.log.info('---------------------------------------')
 
     def receive(self, ch, method, props, body):
-        self.log.info('************ Received Request ************')
+        self.log.info('Received message')
         try:
             code, message, image_dict = load_message(body)
             if code != 200:
@@ -98,6 +98,8 @@ class MessageQueue(object):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
             host=MQ_HOST, port=MQ_PORT, virtual_host=MQ_VHOST, credentials=pika.PlainCredentials(MQ_USNM, MQ_PSWD)))
         self.channel = self.connection.channel()
+        self.channel.queue_declare(queue=COMP_REQUEST, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=COMP_RESPONSE, durable=MQ_DURABLE)
         self.channel.queue_declare(queue=LANE_REQUEST, durable=MQ_DURABLE)
         self.channel.queue_declare(queue=LANE_RESPONSE, durable=MQ_DURABLE)
         self.channel.queue_declare(queue=OBST_REQUEST, durable=MQ_DURABLE)
@@ -106,10 +108,11 @@ class MessageQueue(object):
         self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
         self.log = Log('message_queue')
 
-    def publish(self, queue, message):
+    def publish(self, queue, message, callback_queue, corr_id=str(uuid.uuid4())):
         self.channel.basic_publish(
-            exchange='', routing_key=queue, body=message, properties=pika.BasicProperties(delivery_mode=MQ_MODE))
-        self.log.info(queue + ' published ' + message)
+            exchange='', routing_key=queue, body=message, properties=
+            pika.BasicProperties(delivery_mode=MQ_MODE), reply_to=callback_queue, correlation_id=corr_id)
+        self.log.info('Publish message to: ' + queue)
 
     def host(self):
         return MQ_HOST
