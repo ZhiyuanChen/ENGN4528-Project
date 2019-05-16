@@ -3,7 +3,6 @@ import json
 import logging
 import logging.handlers
 import os
-import uuid
 import cv2
 import numpy as np
 import pika
@@ -74,10 +73,10 @@ class Master(object):
     def receive(self, ch, method, props, body):
         self.log.info('Received message')
         try:
-            code, message, image_dict = load_message(body)
+            code, message, image = load_message(body)
             if code != 200:
                 raise Exception
-            windshield = cv2.imdecode(np.fromstring(image_dict['windshield'], np.uint8), 1)
+            windshield = cv2.imdecode(np.fromstring(image, np.uint8), 1)
 
         except Exception:
             pass
@@ -108,10 +107,10 @@ class MessageQueue(object):
         self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
         self.log = Log('message_queue')
 
-    def publish(self, queue, message, callback_queue, corr_id=str(uuid.uuid4())):
+    def publish(self, queue, message, callback_queue, corr_id):
         self.channel.basic_publish(
             exchange='', routing_key=queue, body=message, properties=
-            pika.BasicProperties(delivery_mode=MQ_MODE), reply_to=callback_queue, correlation_id=corr_id)
+            pika.BasicProperties(delivery_mode=MQ_MODE, reply_to=callback_queue, correlation_id=corr_id))
         self.log.info('Publish message to: ' + queue)
 
     def host(self):

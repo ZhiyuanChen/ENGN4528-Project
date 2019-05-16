@@ -1,11 +1,12 @@
 import time
 from concurrent import futures
-
+import uuid
 import numpy as np
 from mss import mss
 
 from objects import Image
-from globals import Message, MessageQueue, Log, MAX_WORKER, COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST
+from globals import Message, MessageQueue, Log, MAX_WORKER, COMP_REQUEST, COMP_RESPONSE, \
+    LANE_REQUEST, LANE_RESPONSE, OBST_REQUEST, OBST_RESPONSE, SIGN_REQUEST, SIGN_RESPONSE
 
 
 class Capture(object):
@@ -19,16 +20,16 @@ class Capture(object):
     def capture(self):
         self.screen_shot = Image(np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720})))
 
-    def publish(self, queue, data):
-        self.mq.publish(queue, Message(200, 'success', data).json())
+    def publish(self, queue, data, callback_queue, corr_id=str(uuid.uuid4())):
+        self.mq.publish(queue, Message(200, 'success', data).json(), callback_queue, corr_id)
 
     def publish_concurrent(self):
         data = self.screen_shot.message
         try:
-            self.publish(COMP_REQUEST, data)
-            self.publish(LANE_REQUEST, data)
-            self.publish(OBST_REQUEST, data)
-            self.publish(SIGN_REQUEST, data)
+            self.publish(COMP_REQUEST, data, COMP_RESPONSE)
+            self.publish(LANE_REQUEST, data, LANE_RESPONSE)
+            self.publish(OBST_REQUEST, data, OBST_RESPONSE)
+            self.publish(SIGN_REQUEST, data, SIGN_RESPONSE)
         except Exception as err:
             self.log.error(err)
 
