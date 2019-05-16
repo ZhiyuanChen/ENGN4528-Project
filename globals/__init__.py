@@ -28,12 +28,15 @@ MQ_USNM = CONFIG.get('Message Queue', 'Username')
 MQ_PSWD = CONFIG.get('Message Queue', 'Password')
 MQ_DURABLE = CONFIG.getboolean('Message Queue', 'Durable')
 MQ_MODE = CONFIG.getint('Message Queue', 'Delivery Mode')
+COMP_REQUEST = CONFIG.get('Message Queue', 'Comprehensive Request Queue')
+COMP_RESPONSE = CONFIG.get('Message Queue', 'Comprehensive Response Queue')
 LANE_REQUEST = CONFIG.get('Message Queue', 'Lane Request Queue')
 LANE_RESPONSE = CONFIG.get('Message Queue', 'Lane Response Queue')
 OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
 OBST_RESPONSE = CONFIG.get('Message Queue', 'Obstacle Response Queue')
 SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
 SIGN_RESPONSE = CONFIG.get('Message Queue', 'Sign Response Queue')
+MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 
 
 def load_message(message):
