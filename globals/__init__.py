@@ -2,6 +2,12 @@ import configparser
 import json
 import os
 
+import cv2
+import numpy as np
+
+from objects.Log import Log
+from objects.MessageQueue import MessageQueue
+
 # Initial global variable for config
 CONFIG_PATH = os.path.join(os.path.dirname(os.getcwd()), 'config.ini')
 CONFIG = configparser.RawConfigParser()
@@ -50,6 +56,27 @@ def get_queue(queue):
             raise Exception
     except Exception:
         pass
+
+
+class Master(object):
+    def __init__(self, channel):
+        self.log = Log(channel)
+        self.mq = MessageQueue()
+        self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
+        self.log.info('------------------------------------')
+        self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
+        self.log.info('------------------------------------')
+
+    def receive(self, ch, method, props, body):
+        self.log.info('************ Received Request ************')
+        try:
+            code, message, image_dict = load_message(body)
+            if code != 200:
+                raise Exception
+            windshield = cv2.imdecode(np.fromstring(image_dict['windshield'], np.uint8), 1)
+
+        except Exception:
+            pass
 
 
 class CVException(Exception):

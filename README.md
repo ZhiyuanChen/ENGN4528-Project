@@ -1,6 +1,11 @@
 # ENGN4528-2019-major-project
 
 
+## Data transmitting using Message Queue
+class Master in globals packaged message queue and log. 
+Inherit Master class, init the basic_consume and start_consuming and rewrite receive for further process.
+
+
 ##### Status code and message
 
 |Code Range |Allocation |

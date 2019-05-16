@@ -1,21 +1,13 @@
 import cv2
 import numpy as np
 
-from globals import load_message, SIGN_REQUEST, PREFETCH_NUM
-from objects.Log import Log
-from objects.MessageQueue import MessageQueue
+from globals import load_message, SIGN_REQUEST, Master
 
 
-class Master(object):
+class SignMaster(Master):
     def __init__(self):
-        self.log = Log('sign_request')
-        self.mq = MessageQueue()
-        self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
+        super(SignMaster, self).__init__(SIGN_REQUEST)
         self.mq.channel.basic_consume(queue=SIGN_REQUEST, on_message_callback=self.receive)
-        self.log.info('------------------------------------')
-        self.log.info('HOST: ' + self.mq.host() + ' PORT: ' + str(
-            self.mq.port()) + ' QUEUE: ' + SIGN_REQUEST + ' Ready to consume')
-        self.log.info('------------------------------------')
         self.mq.channel.start_consuming()
 
     def receive(self, ch, method, props, body):
