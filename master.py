@@ -1,9 +1,7 @@
 import time
 import traceback
-from globals import MessageQueue, Log
-from objects.Message import Message
-from objects.Image import Image
-from objects.Truck import Truck
+from globals import Message, MessageQueue, Log
+from objects import Image, Truck
 
 
 class Master(object):

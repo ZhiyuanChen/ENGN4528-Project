@@ -4,9 +4,8 @@ from concurrent import futures
 import numpy as np
 from mss import mss
 
-from objects.Image import Image
-from globals import MessageQueue, Log, MAX_WORKER, COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST
-from objects.Message import Message
+from objects import Image
+from globals import Message, MessageQueue, Log, MAX_WORKER, COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST
 
 
 class Capture(object):
