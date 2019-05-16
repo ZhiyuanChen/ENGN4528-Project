@@ -1,10 +1,12 @@
+import base64
 import time
-from concurrent import futures
 import uuid
+from concurrent import futures
+
+import cv2
 import numpy as np
 from mss import mss
 
-from objects import Image
 from globals import Message, MessageQueue, Log, MAX_WORKER, COMP_REQUEST, COMP_RESPONSE, \
     LANE_REQUEST, LANE_RESPONSE, OBST_REQUEST, OBST_RESPONSE, SIGN_REQUEST, SIGN_RESPONSE
 
@@ -18,13 +20,13 @@ class Capture(object):
         self.screen_shot = None
 
     def capture(self):
-        self.screen_shot = Image(np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720})))
+        self.screen_shot = np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720}))
 
     def publish(self, queue, data, callback_queue, corr_id=str(uuid.uuid4())):
         self.mq.publish(queue, Message(200, 'success', data).json(), callback_queue, corr_id)
 
     def publish_concurrent(self):
-        data = self.screen_shot.message
+        data = base64.b64encode(cv2.imencode('.jpg', self.screen_shot)[1]).decode('ascii')
         try:
             self.publish(COMP_REQUEST, data, COMP_RESPONSE)
             self.publish(LANE_REQUEST, data, LANE_RESPONSE)

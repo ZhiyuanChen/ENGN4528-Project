@@ -1,6 +1,3 @@
-import cv2
-import numpy as np
-
 from globals import Master, load_message, load_image, SIGN_REQUEST
 
 
