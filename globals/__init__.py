@@ -52,7 +52,7 @@ def load_message(message):
 
 def load_image(data):
     try:
-        return cv2.imdecode(np.frombuffer(data), flags=1)
+        return cv2.imdecode(np.fromstring(data, np.uint8), 1)
     except Exception:
         raise Vernie(307, 'Failed to load image', traceback.format_exc())
 
@@ -66,20 +66,9 @@ class Master(object):
         self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
         self.log.info('---------------------------------------')
 
-    def receive(self, message):
-        try:
-            code, message, data = load_message(message)
-            if code != 200:
-                raise Vernie(300, 'Illegal message')
-            return load_image(data)
-        except Vernie:
-            raise Vernie(300, 'Illegal message')
-        except Exception:
-            raise Vernie(301, 'Failed to receive message', traceback.format_exc())
-
     def process(self, ch, method, props, body):
         self.log.info(method.routing_key + ' received ' + props.correlation_id)
-        image = self.receive(body)
+        image = load_image(body)
 
 
 class Message(object):
