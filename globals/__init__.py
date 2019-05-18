@@ -50,9 +50,9 @@ def load_message(message):
         raise Vernie(306, 'Failed to load message', traceback.format_exc())
 
 
-def load_image(string):
+def load_image(data):
     try:
-        return cv2.imdecode(np.frombuffer(base64.b64decode(string), dtype=np.uint8), flags=1)
+        return cv2.imdecode(np.frombuffer(data), flags=1)
     except Exception:
         raise Vernie(307, 'Failed to load image', traceback.format_exc())
 
@@ -113,10 +113,12 @@ class MessageQueue(object):
             pika.BasicProperties(delivery_mode=MQ_MODE, reply_to=callback_queue, correlation_id=correlation_id))
         self.log.info('Publish message to: ' + queue)
 
-    def host(self):
+    @staticmethod
+    def host():
         return MQ_HOST
 
-    def port(self):
+    @staticmethod
+    def port():
         return MQ_PORT
 
 
