@@ -18,7 +18,8 @@ class Capture(object):
         self.screen_shot = None
 
     def capture(self):
-        self.screen_shot = np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720}))
+        self.screen_shot = \
+            cv2.cvtColor(np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720})), cv2.COLOR_BGR2RGB)
 
     def publish(self, queue, data, callback_queue, corr_id=str(time.time())):
         self.mq.publish(queue, data, callback_queue, corr_id)
