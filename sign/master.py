@@ -4,7 +4,7 @@ from globals import Master, Vernie, traceback, load_message, load_image, SIGN_RE
 class SignMaster(Master):
     def __init__(self):
         super(SignMaster, self).__init__(SIGN_REQUEST)
-        self.mq.channel.basic_consume(queue=SIGN_REQUEST, on_message_callback=self.receive)
+        self.mq.channel.basic_consume(queue=SIGN_REQUEST, on_message_callback=self.process)
         self.mq.channel.start_consuming()
 
     def receive(self, message):
