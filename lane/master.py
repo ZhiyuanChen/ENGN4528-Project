@@ -23,7 +23,8 @@ class LaneMaster(Master):
 
     def process(self, ch, method, props, body):
         self.log.info(method.routing_key + ' received ' + props.correlation_id)
-        image = self.receive(body)
+        data = self.receive(body)
+        image = tf.convert_to_tensor(data, dtype=tf.float32)
 
 
 class Lane(object):
