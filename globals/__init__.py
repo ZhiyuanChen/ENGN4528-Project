@@ -66,17 +66,20 @@ class Master(object):
         self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
         self.log.info('---------------------------------------')
 
-    def receive(self, ch, method, props, body):
-        self.log.info('Received message from ' + method.routing_key)
+    def receive(self, message):
         try:
-            code, message, image = load_message(body)
+            code, message, data = load_message(message)
             if code != 200:
                 raise Vernie(300, 'Illegal message')
-            windshield = cv2.imdecode(np.fromstring(image, np.uint8), 1)
+            return load_image(data)
         except Vernie:
             raise Vernie(300, 'Illegal message')
         except Exception:
             raise Vernie(301, 'Failed to receive message', traceback.format_exc())
+
+    def process(self, ch, method, props, body):
+        self.log.info(method.routing_key + ' received ' + props.correlation_id)
+        image = self.receive(body)
 
 
 class Message(object):
@@ -104,10 +107,10 @@ class MessageQueue(object):
         self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
         self.log = Log('message_queue')
 
-    def publish(self, queue, message, callback_queue, corr_id):
+    def publish(self, queue, message, callback_queue, correlation_id):
         self.channel.basic_publish(
             exchange='', routing_key=queue, body=message, properties=
-            pika.BasicProperties(delivery_mode=MQ_MODE, reply_to=callback_queue, correlation_id=corr_id))
+            pika.BasicProperties(delivery_mode=MQ_MODE, reply_to=callback_queue, correlation_id=correlation_id))
         self.log.info('Publish message to: ' + queue)
 
     def host(self):
