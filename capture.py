@@ -1,13 +1,11 @@
-import base64
 import time
-import uuid
 from concurrent import futures
 
 import cv2
 import numpy as np
 from mss import mss
 
-from globals import Message, MessageQueue, Log, MAX_WORKER, COMP_REQUEST, COMP_RESPONSE, \
+from globals import MessageQueue, Log, MAX_WORKER, COMP_REQUEST, COMP_RESPONSE, \
     LANE_REQUEST, LANE_RESPONSE, OBST_REQUEST, OBST_RESPONSE, SIGN_REQUEST, SIGN_RESPONSE
 
 
@@ -22,16 +20,17 @@ class Capture(object):
     def capture(self):
         self.screen_shot = np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720}))
 
-    def publish(self, queue, data, callback_queue, corr_id=str(uuid.uuid4())):
-        self.mq.publish(queue, Message(200, 'success', data).json(), callback_queue, corr_id)
+    def publish(self, queue, data, callback_queue, corr_id=str(time.time())):
+        self.mq.publish(queue, data, callback_queue, corr_id)
 
     def publish_concurrent(self):
-        data = base64.b64encode(cv2.imencode('.jpg', self.screen_shot)[1]).decode('ascii')
+        data = cv2.imencode('.jpg', self.screen_shot)[1].tostring()
+        corr_id = str(time.time())
         try:
-            self.publish(COMP_REQUEST, data, COMP_RESPONSE)
-            self.publish(LANE_REQUEST, data, LANE_RESPONSE)
-            self.publish(OBST_REQUEST, data, OBST_RESPONSE)
-            self.publish(SIGN_REQUEST, data, SIGN_RESPONSE)
+            self.publish(COMP_REQUEST, data, COMP_RESPONSE, corr_id)
+            self.publish(LANE_REQUEST, data, LANE_RESPONSE, corr_id)
+            self.publish(OBST_REQUEST, data, OBST_RESPONSE, corr_id)
+            self.publish(SIGN_REQUEST, data, SIGN_RESPONSE, corr_id)
         except Exception as err:
             self.log.error(err)
 
