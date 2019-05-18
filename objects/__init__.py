@@ -31,7 +31,7 @@ class Image(object):
 
 
 @unique
-class Period(Enum):
+class period(Enum):
     NotSet = 0
     Spring = 1
     Morning = 2
@@ -42,7 +42,7 @@ class Period(Enum):
 
 
 @unique
-class Position(Enum):
+class position(Enum):
     NotSet = 0
     HighSpeed = 1
     State = 2
@@ -60,36 +60,36 @@ class Position(Enum):
 class Truck(object):
     # Engine status: 0 Not Started, 1 Electric Started, 2 Engine Started
     # Turn signal: 0 Off, 1 Left, 2 Right, 3 Emergency
-    # Parking Brake
-    # Brake
-    # Light
-    # Odometer
+    # Parking brake
+    # brake
+    # light
+    # odometer
     # Fuel gauge
     def __init__(self, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
-                 speed_limit=0, navigation=0, position=Position.NotSet, period=Period.NotSet):
-        self._EngineStatus = engine_status
+                 speed_limit=0, navigation=0, position=position.NotSet, period=period.NotSet):
+        self._engine_status = engine_status
         self._TurnSignal = turn_signal
-        self._ParkingBrake = parking_brake
-        self._Brake = brake
-        self._Light = light
-        self._Odometer = odometer
-        self._FuelGauge = fuel_gauge
-        self._SpeedLimit = speed_limit
-        self._Navigation = navigation
-        self._Position = position
-        self._Period = period
+        self._parking_brake = parking_brake
+        self._brake = brake
+        self._light = light
+        self._odometer = odometer
+        self._fuel_gauge = fuel_gauge
+        self._speed_limit = speed_limit
+        self._navigation = navigation
+        self._position = position
+        self._period = period
 
     @property
-    def EngineStatus(self):
-        return self._EngineStatus
+    def engine_status(self):
+        return self._engine_status
 
-    @EngineStatus.setter
-    def EngineStatus(self, value):
-        self._EngineStatus = value
+    @engine_status.setter
+    def engine_status(self, value):
+        self._engine_status = value
 
-    @EngineStatus.deleter
-    def EngineStatus(self):
-        del self._EngineStatus
+    @engine_status.deleter
+    def engine_status(self):
+        del self._engine_status
 
     @property
     def TurnSignal(self):
@@ -104,110 +104,109 @@ class Truck(object):
         del self._TurnSignal
 
     @property
-    def ParkingBrake(self):
-        return self._ParkingBrake
+    def parking_brake(self):
+        return self._parking_brake
 
-    @ParkingBrake.setter
-    def ParkingBrake(self, value):
-        self._ParkingBrake = value
+    @parking_brake.setter
+    def parking_brake(self, value):
+        self._parking_brake = value
 
-    @ParkingBrake.deleter
-    def ParkingBrake(self):
-        del self._ParkingBrake
-
-    @property
-    def Brake(self):
-        return self._Brake
-
-    @Brake.setter
-    def Brake(self, value):
-        self._Brake = value
-
-    @Brake.deleter
-    def Brake(self):
-        del self._Brake
+    @parking_brake.deleter
+    def parking_brake(self):
+        del self._parking_brake
 
     @property
-    def Light(self):
-        return self._Light
+    def brake(self):
+        return self._brake
 
-    @Light.setter
-    def Light(self, value):
-        self._Light = value
+    @brake.setter
+    def brake(self, value):
+        self._brake = value
 
-    @Light.deleter
-    def Light(self):
-        del self._Light
-
-    @property
-    def Odometer(self):
-        return self._Odometer
-
-    @Odometer.setter
-    def Odometer(self, value):
-        self._Odometer = value
-
-    @Odometer.deleter
-    def Odometer(self):
-        del self._Odometer
+    @brake.deleter
+    def brake(self):
+        del self._brake
 
     @property
-    def FuelGauge(self):
-        return self._FuelGauge
+    def light(self):
+        return self._light
 
-    @FuelGauge.setter
-    def FuelGauge(self, value):
-        self._FuelGauge = value
+    @light.setter
+    def light(self, value):
+        self._light = value
 
-    @FuelGauge.deleter
-    def FuelGauge(self):
-        del self._FuelGauge
-
-    @property
-    def SpeedLimit(self):
-        return self._SpeedLimit
-
-    @SpeedLimit.setter
-    def SpeedLimit(self, value):
-        self._SpeedLimit = value
-
-    @SpeedLimit.deleter
-    def SpeedLimit(self):
-        del self._SpeedLimit
+    @light.deleter
+    def light(self):
+        del self._light
 
     @property
-    def Navigation(self):
-        return self._Navigation
+    def odometer(self):
+        return self._odometer
 
-    @Navigation.setter
-    def Navigation(self, value):
-        self._Navigation = value
+    @odometer.setter
+    def odometer(self, value):
+        self._odometer = value
 
-    @Navigation.deleter
-    def Navigation(self):
-        del self._Navigation
-
-    @property
-    def Position(self):
-        return self._Position
-
-    @Position.setter
-    def Position(self, value):
-        self._Position = value
-
-    @Position.deleter
-    def Position(self):
-        del self._Position
+    @odometer.deleter
+    def odometer(self):
+        del self._odometer
 
     @property
-    def Period(self):
-        return self._Period
+    def fuel_gauge(self):
+        return self._fuel_gauge
 
-    @Period.setter
-    def Period(self, value):
-        self._Period = value
+    @fuel_gauge.setter
+    def fuel_gauge(self, value):
+        self._fuel_gauge = value
 
-    @Period.deleter
-    def Period(self):
-        del self._Period
+    @fuel_gauge.deleter
+    def fuel_gauge(self):
+        del self._fuel_gauge
 
+    @property
+    def speed_limit(self):
+        return self._speed_limit
+
+    @speed_limit.setter
+    def speed_limit(self, value):
+        self._speed_limit = value
+
+    @speed_limit.deleter
+    def speed_limit(self):
+        del self._speed_limit
+
+    @property
+    def navigation(self):
+        return self._navigation
+
+    @navigation.setter
+    def navigation(self, value):
+        self._navigation = value
+
+    @navigation.deleter
+    def navigation(self):
+        del self._navigation
+
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, value):
+        self._position = value
+
+    @position.deleter
+    def position(self):
+        del self._position
+
+    @property
+    def period(self):
+        return self._period
+
+    @period.setter
+    def period(self, value):
+        self._period = value
+
+    @period.deleter
+    def period(self):
+        del self._period
