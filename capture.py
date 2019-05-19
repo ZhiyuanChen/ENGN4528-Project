@@ -5,16 +5,15 @@ import cv2
 import numpy as np
 from mss import mss
 
-from globals import MessageQueue, Log, MAX_WORKER, COMP_REQUEST, COMP_RESPONSE, \
-    LANE_REQUEST, LANE_RESPONSE, OBST_REQUEST, OBST_RESPONSE, SIGN_REQUEST, SIGN_RESPONSE
+from globals import MessageQueue, Log, MQ, CONCURRENT
 
 
 class Capture(object):
     def __init__(self):
         self.log = Log('capture')
         self.mq = MessageQueue()
-        self.queue_list = [COMP_REQUEST, LANE_REQUEST, OBST_REQUEST, SIGN_REQUEST]
-        self.thread_pool = futures.ThreadPoolExecutor(max_workers=MAX_WORKER)
+        self.queue_list = [MQ.COMP_REQUEST, MQ.LANE_REQUEST, MQ.OBST_REQUEST, MQ.SIGN_REQUEST]
+        self.thread_pool = futures.ThreadPoolExecutor(max_workers=CONCURRENT.MAX_WORKER)
         self.screen_shot = None
 
     def capture(self):
@@ -28,10 +27,10 @@ class Capture(object):
         data = cv2.imencode('.jpg', self.screen_shot)[1].tostring()
         corr_id = str(time.time())
         try:
-            self.publish(COMP_REQUEST, data, COMP_RESPONSE, corr_id)
-            self.publish(LANE_REQUEST, data, LANE_RESPONSE, corr_id)
-            self.publish(OBST_REQUEST, data, OBST_RESPONSE, corr_id)
-            self.publish(SIGN_REQUEST, data, SIGN_RESPONSE, corr_id)
+            self.publish(MQ.COMP_REQUEST, data, MQ.COMP_RESPONSE, corr_id)
+            self.publish(MQ.LANE_REQUEST, data, MQ.LANE_RESPONSE, corr_id)
+            self.publish(MQ.OBST_REQUEST, data, MQ.OBST_RESPONSE, corr_id)
+            self.publish(MQ.SIGN_REQUEST, data, MQ.SIGN_RESPONSE, corr_id)
         except Exception as err:
             self.log.error(err)
 

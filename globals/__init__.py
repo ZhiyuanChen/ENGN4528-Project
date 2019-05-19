@@ -18,7 +18,7 @@ __CONCURRENT = edict()
 __NN = edict()
 LOG = __LOG
 MQ = __MQ
-concurrent = __CONCURRENT
+CONCURRENT = __CONCURRENT
 NN = __NN
 # Initial global variable for config
 CONFIG_PATH = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'config.ini')
@@ -52,6 +52,7 @@ __MQ.PREFETCH_NUM = int(CONFIG.get('Message Queue', 'Consume Number'))
 __CONCURRENT.MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 # Initial global variables for neural network
 __NN.VGG_MEAN = [123.68, 116.779, 103.939]
+__NN.CPU_AMOUNT = int(CONFIG.get('Neural Network', 'CPU Amount'))
 __NN.GPU_AMOUNT = int(CONFIG.get('Neural Network', 'GPU Amount'))
 
 
@@ -113,7 +114,7 @@ class MessageQueue(object):
         self.channel.basic_publish(
             exchange='', routing_key=queue, body=message, properties=
             pika.BasicProperties(delivery_mode=MQ.MODE, reply_to=callback_queue, correlation_id=correlation_id))
-        self.LOG.info('Publish message to: ' + queue)
+        self.log.info('Publish message to: ' + queue)
 
     @staticmethod
     def host():
