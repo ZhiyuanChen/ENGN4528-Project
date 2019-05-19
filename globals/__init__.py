@@ -9,37 +9,50 @@ import traceback
 import cv2
 import numpy as np
 import pika
+from easydict import EasyDict as edict
 
+
+__LOG = edict()
+__MQ = edict()
+__CONCURRENT = edict()
+__NN = edict()
+LOG = __LOG
+MQ = __MQ
+concurrent = __CONCURRENT
+NN = __NN
 # Initial global variable for config
 CONFIG_PATH = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'config.ini')
 CONFIG = configparser.RawConfigParser()
 CONFIG.read(CONFIG_PATH)
 # Initial global variables for log
-LOG_DIR = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'logs')
-LOG_LVL = CONFIG.get('Log', 'Level')
-LOG_WHEN = CONFIG.get('Log', 'When')
-LOG_INTV = CONFIG.getint('Log', 'Interval')
-LOG_MAXC = CONFIG.getint('Log', 'Max Counter')
-LOG_FMT = CONFIG.get('Log', 'Format')
+__LOG.DIR = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'logs')
+__LOG.LVL = CONFIG.get('Log', 'Level')
+__LOG.WHEN = CONFIG.get('Log', 'When')
+__LOG.INTV = CONFIG.getint('Log', 'Interval')
+__LOG.MAXC = CONFIG.getint('Log', 'Max Counter')
+__LOG.FMT = CONFIG.get('Log', 'Format')
 # Initial global variables for message queue
-MQ_HOST = CONFIG.get('Message Queue', 'Host')
-MQ_PORT = CONFIG.getint('Message Queue', 'Port')
-MQ_VHOST = CONFIG.get('Message Queue', 'Virtual Host')
-MQ_USNM = CONFIG.get('Message Queue', 'Username')
-MQ_PSWD = CONFIG.get('Message Queue', 'Password')
-MQ_DURABLE = CONFIG.getboolean('Message Queue', 'Durable')
-MQ_MODE = CONFIG.getint('Message Queue', 'Delivery Mode')
-COMP_REQUEST = CONFIG.get('Message Queue', 'Comprehensive Request Queue')
-COMP_RESPONSE = CONFIG.get('Message Queue', 'Comprehensive Response Queue')
-LANE_REQUEST = CONFIG.get('Message Queue', 'Lane Request Queue')
-LANE_RESPONSE = CONFIG.get('Message Queue', 'Lane Response Queue')
-OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
-OBST_RESPONSE = CONFIG.get('Message Queue', 'Obstacle Response Queue')
-SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
-SIGN_RESPONSE = CONFIG.get('Message Queue', 'Sign Response Queue')
+__MQ.HOST = CONFIG.get('Message Queue', 'Host')
+__MQ.PORT = CONFIG.getint('Message Queue', 'Port')
+__MQ.VHOST = CONFIG.get('Message Queue', 'Virtual Host')
+__MQ.USNM = CONFIG.get('Message Queue', 'Username')
+__MQ.PSWD = CONFIG.get('Message Queue', 'Password')
+__MQ.DURABLE = CONFIG.getboolean('Message Queue', 'Durable')
+__MQ.MODE = CONFIG.getint('Message Queue', 'Delivery Mode')
+__MQ.COMP_REQUEST = CONFIG.get('Message Queue', 'Comprehensive Request Queue')
+__MQ.COMP_RESPONSE = CONFIG.get('Message Queue', 'Comprehensive Response Queue')
+__MQ.LANE_REQUEST = CONFIG.get('Message Queue', 'Lane Request Queue')
+__MQ.LANE_RESPONSE = CONFIG.get('Message Queue', 'Lane Response Queue')
+__MQ.OBST_REQUEST = CONFIG.get('Message Queue', 'Obstacle Request Queue')
+__MQ.OBST_RESPONSE = CONFIG.get('Message Queue', 'Obstacle Response Queue')
+__MQ.SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
+__MQ.SIGN_RESPONSE = CONFIG.get('Message Queue', 'Sign Response Queue')
+__MQ.PREFETCH_NUM = int(CONFIG.get('Message Queue', 'Consume Number'))
 # Initial global variables for concurrency
-PREFETCH_NUM = int(CONFIG.get('Concurrency', 'Consume Number'))
-MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
+__CONCURRENT.MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
+# Initial global variables for neural network
+__NN.VGG_MEAN = [123.68, 116.779, 103.939]
+__NN.GPU_AMOUNT = int(CONFIG.get('Neural Network', 'GPU Amount'))
 
 
 def load_message(message):
@@ -50,9 +63,9 @@ def load_message(message):
         raise Vernie(306, 'Failed to load message', traceback.format_exc())
 
 
-def load_image(string):
+def load_image(data):
     try:
-        return cv2.imdecode(np.frombuffer(base64.b64decode(string), dtype=np.uint8), flags=1)
+        return cv2.imdecode(np.fromstring(data, np.uint8), 1)
     except Exception:
         raise Vernie(307, 'Failed to load image', traceback.format_exc())
 
@@ -61,25 +74,14 @@ class Master(object):
     def __init__(self, channel):
         self.log = Log(channel)
         self.mq = MessageQueue()
-        self.mq.channel.basic_qos(prefetch_count=PREFETCH_NUM)
+        self.mq.channel.basic_qos(prefetch_count=MQ.PREFETCH_NUM)
         self.log.info('---------------------------------------')
         self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
         self.log.info('---------------------------------------')
 
-    def receive(self, message):
-        try:
-            code, message, data = load_message(message)
-            if code != 200:
-                raise Vernie(300, 'Illegal message')
-            return load_image(data)
-        except Vernie:
-            raise Vernie(300, 'Illegal message')
-        except Exception:
-            raise Vernie(301, 'Failed to receive message', traceback.format_exc())
-
     def process(self, ch, method, props, body):
         self.log.info(method.routing_key + ' received ' + props.correlation_id)
-        image = self.receive(body)
+        image = load_image(body)
 
 
 class Message(object):
@@ -95,41 +97,43 @@ class Message(object):
 class MessageQueue(object):
     def __init__(self):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host=MQ_HOST, port=MQ_PORT, virtual_host=MQ_VHOST, credentials=pika.PlainCredentials(MQ_USNM, MQ_PSWD)))
+            host=MQ.HOST, port=MQ.PORT, virtual_host=MQ.VHOST, credentials=pika.PlainCredentials(MQ.USNM, MQ.PSWD)))
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=COMP_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=COMP_RESPONSE, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=LANE_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=LANE_RESPONSE, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=OBST_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=OBST_RESPONSE, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=SIGN_REQUEST, durable=MQ_DURABLE)
-        self.channel.queue_declare(queue=SIGN_RESPONSE, durable=MQ_DURABLE)
+        self.channel.queue_declare(queue=MQ.COMP_REQUEST, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.COMP_RESPONSE, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.LANE_REQUEST, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.LANE_RESPONSE, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.OBST_REQUEST, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.OBST_RESPONSE, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.SIGN_REQUEST, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.SIGN_RESPONSE, durable=MQ.DURABLE)
         self.log = Log('message_queue')
 
     def publish(self, queue, message, callback_queue, correlation_id):
         self.channel.basic_publish(
             exchange='', routing_key=queue, body=message, properties=
-            pika.BasicProperties(delivery_mode=MQ_MODE, reply_to=callback_queue, correlation_id=correlation_id))
-        self.log.info('Publish message to: ' + queue)
+            pika.BasicProperties(delivery_mode=MQ.MODE, reply_to=callback_queue, correlation_id=correlation_id))
+        self.LOG.info('Publish message to: ' + queue)
 
-    def host(self):
-        return MQ_HOST
+    @staticmethod
+    def host():
+        return MQ.HOST
 
-    def port(self):
-        return MQ_PORT
+    @staticmethod
+    def port():
+        return MQ.PORT
 
 
 class Log(object):
     def __init__(self, file=CONFIG.get('Log', 'File')):
-        log_file = os.path.join(LOG_DIR, file)
+        log_file = os.path.join(LOG.DIR, file)
         logging.basicConfig()
         self.logger = logging.getLogger()
-        self.logger.setLevel(LOG_LVL)
-        self.handler = logging.handlers.TimedRotatingFileHandler(filename=log_file, when=LOG_WHEN, interval=LOG_INTV)
+        self.logger.setLevel(LOG.LVL)
+        self.handler = logging.handlers.TimedRotatingFileHandler(filename=log_file, when=LOG.WHEN, interval=LOG.INTV)
         self.handler.suffix = '%Y-%m-%d.log'
-        self.handler.setLevel(LOG_LVL)
-        self.handler.setFormatter(logging.Formatter(LOG_FMT))
+        self.handler.setLevel(LOG.LVL)
+        self.handler.setFormatter(logging.Formatter(LOG.FMT))
         self.logger.addHandler(self.handler)
 
     def info(self, message):
