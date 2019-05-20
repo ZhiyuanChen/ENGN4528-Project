@@ -21,11 +21,12 @@ MQ = __MQ
 CONCURRENT = __CONCURRENT
 NN = __NN
 # Initial global variable for config
-CONFIG_PATH = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'config.ini')
+PROJECT_PATH = 'D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project'
+CONFIG_PATH = os.path.join(PROJECT_PATH, 'config.ini')
 CONFIG = configparser.RawConfigParser()
 CONFIG.read(CONFIG_PATH)
 # Initial global variables for log
-__LOG.DIR = os.path.join('D:\\OneDrive\\OneDrive - Australian National University\\COMP\\4528\\project', 'logs')
+__LOG.DIR = os.path.join(PROJECT_PATH, 'logs')
 __LOG.LVL = CONFIG.get('Log', 'Level')
 __LOG.WHEN = CONFIG.get('Log', 'When')
 __LOG.INTV = CONFIG.getint('Log', 'Interval')
@@ -54,6 +55,9 @@ __CONCURRENT.MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 __NN.VGG_MEAN = [123.68, 116.779, 103.939]
 __NN.CPU_AMOUNT = int(CONFIG.get('Neural Network', 'CPU Amount'))
 __NN.GPU_AMOUNT = int(CONFIG.get('Neural Network', 'GPU Amount'))
+__NN.LANE_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'lane/model')
+__NN.OBST_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'obstacle/model/model.h5')
+__NN.SIGN_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'sign/model')
 
 
 def load_message(message):
