@@ -1,13 +1,12 @@
 import cv2
 import numpy as np
+
+import obstacle.mrcnn.model as modellib
 from obstacle.mrcnn import coco
 from obstacle.mrcnn import utils
-import obstacle.mrcnn.model as modellib
 from obstacle.mrcnn import visualize
-from obstacle.mrcnn.model import log
 from obstacle.mrcnn.config import Config
-
-
+from obstacle.mrcnn.model import log
 
 class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
                'bus', 'train', 'truck', 'boat', 'traffic light',
