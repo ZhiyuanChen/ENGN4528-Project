@@ -7,11 +7,9 @@ from globals import Master, Vernie, traceback, load_image, MQ, NN, LOG, cv2
 class ObstMaster(Master):
     def __init__(self):
         super(ObstMaster, self).__init__(MQ.OBST_REQUEST)
-        config = InferenceConfig()
         with tf.device("/gpu:0"):
-            self.model = modellib.MaskRCNN(mode="inference", model_dir=LOG.DIR, config=config)
-        self.model.load_weights(NN.OBST_WEIGHTS_PATH, by_name=True,
-                           exclude=["mrcnn_class_logits", "mrcnn_bbox_fc", "mrcnn_bbox", "mrcnn_mask"])
+            self.model = modellib.MaskRCNN(mode="inference", model_dir=LOG.DIR, config=coco.CocoConfig())
+        self.model.load_weights(NN.OBST_WEIGHTS_PATH, by_name=True)
         self.mq.channel.basic_consume(queue=MQ.OBST_REQUEST, on_message_callback=self.process)
         self.mq.channel.start_consuming()
 
