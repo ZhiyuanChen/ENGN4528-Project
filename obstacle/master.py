@@ -17,11 +17,7 @@ class ObstMaster(Master):
         self.log.info(method.routing_key + ' received ' + props.correlation_id)
         image = load_image(body)
         result = self.model.detect([image], verbose=1)[0]
-
-
-class Obstacle(object):
-    def __init__(self):
-        pass
+        image = draw_result(image, result)
 
 
 def main():
