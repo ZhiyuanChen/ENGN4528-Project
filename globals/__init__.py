@@ -52,7 +52,7 @@ __MQ.PREFETCH_NUM = int(CONFIG.get('Message Queue', 'Consume Number'))
 # Initial global variables for concurrency
 __CONCURRENT.MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 # Initial global variables for neural network
-__NN.VGG_MEAN = [123.68, 116.779, 103.939]
+__NN.VGG_MEAN = np.array([123.68, 116.779, 103.939])
 __NN.CPU_AMOUNT = int(CONFIG.get('Neural Network', 'CPU Amount'))
 __NN.GPU_AMOUNT = int(CONFIG.get('Neural Network', 'GPU Amount'))
 __NN.LANE_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'lane/model')
