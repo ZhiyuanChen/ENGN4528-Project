@@ -29,6 +29,18 @@ class Image(object):
         self.failure2 = image[682:693, 670:688]
         self.failure3 = image[682:693, 693:712]
 
+    @staticmethod
+    def is_green(part):
+        return True if part[1].mean() > 10 else False
+
+    @staticmethod
+    def is_red(part):
+        return True if part[2].mean() > 10 else False
+
+    @staticmethod
+    def is_yellow(part):
+        return True if (part[1] + part[2]).mean() > 10 else False
+
 
 @unique
 class period(Enum):
@@ -68,7 +80,7 @@ class Truck(object):
     def __init__(self, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
                  speed_limit=0, navigation=0, position=position.NotSet, period=period.NotSet):
         self._engine_status = engine_status
-        self._TurnSignal = turn_signal
+        self._turn_signal = turn_signal
         self._parking_brake = parking_brake
         self._brake = brake
         self._light = light
@@ -78,6 +90,19 @@ class Truck(object):
         self._navigation = navigation
         self._position = position
         self._period = period
+
+    def init(self, image):
+        image = Image(image)
+        if image.is_green(image.left_turn):
+            if image.is_green(image.right_turn):
+                self.turn_signal = 3
+            else:
+                self.turn_signal = 1
+        elif image.is_green(image.right_turn):
+            self.turn_signal = 2
+        else:
+            self.turn_signal = 0
+        self.parking_brake = 1 if image.is_red(image.parking_break) else 0
 
     @property
     def engine_status(self):
@@ -92,16 +117,16 @@ class Truck(object):
         del self._engine_status
 
     @property
-    def TurnSignal(self):
-        return self._TurnSignal
+    def turn_signal(self):
+        return self._turn_signal
 
-    @TurnSignal.setter
-    def TurnSignal(self, value):
-        self._TurnSignal = value
+    @turn_signal.setter
+    def turn_signal(self, value):
+        self._turn_signal = value
 
-    @TurnSignal.deleter
-    def TurnSignal(self):
-        del self._TurnSignal
+    @turn_signal.deleter
+    def turn_signal(self):
+        del self._turn_signal
 
     @property
     def parking_brake(self):
