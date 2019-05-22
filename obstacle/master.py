@@ -1,7 +1,7 @@
 import tensorflow as tf
 
+from globals import Master, load_image, MQ, NN, LOG
 from obstacle import *
-from globals import Master, Vernie, traceback, load_image, MQ, NN, LOG, cv2
 
 
 class ObstMaster(Master):
@@ -10,14 +10,21 @@ class ObstMaster(Master):
         with tf.device("/gpu:0"):
             self.model = modellib.MaskRCNN(mode="inference", model_dir=LOG.DIR, config=coco.CocoConfig())
         self.model.load_weights(NN.OBST_WEIGHTS_PATH, by_name=True)
-        self.mq.channel.basic_consume(queue=MQ.OBST_REQUEST, on_message_callback=self.process)
+        self.queue = MQ.OBST_REQUEST
+        self.mq.channel.basic_consume(self.queue, on_message_callback=self.process)
         self.mq.channel.start_consuming()
 
     def process(self, ch, method, props, body):
-        self.log.info(method.routing_key + ' received ' + props.correlation_id)
-        image = load_image(body)
-        result = self.model.detect([image], verbose=1)[0]
-        image = draw_result(image, result)
+        try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            self.log.info(method.routing_key + ' received ' + props.correlation_id)
+            image = load_image(body)
+            result = self.model.detect([image], verbose=1)[0]
+            image = draw_result(image, result)
+            data = cv2.imencode('.jpg', image)[1].tostring()
+            self.publish(data, props.correlation_id)
+        except Exception as err:
+            self.log.error(err)
 
 
 def main():
