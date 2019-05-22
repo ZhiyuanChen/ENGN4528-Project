@@ -17,20 +17,18 @@ class Capture(object):
         self.screen_shot = None
 
     def capture(self):
-        self.screen_shot = \
-            cv2.cvtColor(np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720})), cv2.COLOR_BGR2RGB)
+        self.screen_shot = np.array(mss().grab({"top": 40, "left": 0, "width": 1280, "height": 720}))
 
-    def publish(self, queue, data, callback_queue, corr_id=str(time.time())):
-        self.mq.publish(queue, data, callback_queue, corr_id)
+    def publish(self, queue, message):
+        self.mq.publish(queue, message)
 
     def publish_concurrent(self):
         data = cv2.imencode('.jpg', self.screen_shot)[1].tostring()
-        corr_id = str(time.time())
         try:
-            self.publish(MQ.COMP_REQUEST, data, MQ.COMP_RESPONSE, corr_id)
-            self.publish(MQ.LANE_REQUEST, data, MQ.LANE_RESPONSE, corr_id)
-            self.publish(MQ.OBST_REQUEST, data, MQ.OBST_RESPONSE, corr_id)
-            self.publish(MQ.SIGN_REQUEST, data, MQ.SIGN_RESPONSE, corr_id)
+            self.publish(MQ.COMP_REQUEST, data)
+            self.publish(MQ.LANE_REQUEST, data)
+            self.publish(MQ.OBST_REQUEST, data)
+            self.publish(MQ.SIGN_REQUEST, data)
         except Exception as err:
             self.log.error(err)
 

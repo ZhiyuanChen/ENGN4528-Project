@@ -17,12 +17,12 @@ class ObstMaster(Master):
     def process(self, ch, method, props, body):
         try:
             ch.basic_ack(delivery_tag=method.delivery_tag)
-            self.log.info(method.routing_key + ' received ' + props.correlation_id)
+            self.log.info(method.routing_key + ' received message')
             image = load_image(body)
             result = self.model.detect([image], verbose=1)[0]
             image = draw_result(image, result)
             data = cv2.imencode('.jpg', image)[1].tostring()
-            self.publish(data, props.correlation_id)
+            self.mq.publish(MQ.OBST_RESPONSE, data)
         except Exception as err:
             self.log.error(err)
 

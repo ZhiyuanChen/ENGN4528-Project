@@ -8,7 +8,7 @@ class SignMaster(Master):
         self.mq.channel.start_consuming()
 
     def process(self, ch, method, props, body):
-        self.log.info(method.routing_key + ' received ' + props.correlation_id)
+        self.log.info(method.routing_key + ' received message')
         image = load_image(body)
         cv2.imshow('image', image)
         cv2.waitKey()

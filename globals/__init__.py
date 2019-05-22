@@ -76,23 +76,23 @@ def load_image(data):
 
 
 class Master(object):
-    def __init__(self, channel):
-        self.log = Log(channel)
+    def __init__(self, channel=None):
         self.mq = MessageQueue()
         self.mq.channel.basic_qos(prefetch_count=MQ.PREFETCH_NUM)
-        self.log.info('---------------------------------------')
-        self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
-        self.log.info('---------------------------------------')
+        if channel is not None:
+            self.log = Log(channel)
+            self.log.info('---------------------------------------')
+            self.log.info('Listening ' + channel + ' on ' + self.mq.host() + ':' + str(self.mq.port()))
+            self.log.info('---------------------------------------')
+        else:
+            self.log = Log('master')
         # This parameter MUST be overwritten in subclass
         self.queue = None
 
     # This function MUST be overwrite in subclass, do NOT call this function
     def process(self, ch, method, props, body):
-        self.log.info(method.routing_key + ' received ' + props.correlation_id)
+        self.log.info(method.routing_key + ' received message')
         image = load_image(body)
-
-    def publish(self, message, corr_id):
-        self.mq.publish(self.queue, message, corr_id)
 
 
 class Message(object):
@@ -120,10 +120,8 @@ class MessageQueue(object):
         self.channel.queue_declare(queue=MQ.SIGN_RESPONSE, durable=MQ.DURABLE)
         self.log = Log('message_queue')
 
-    def publish(self, queue, message, correlation_id=str(time.time()), callback_queue=None):
-        self.channel.basic_publish(
-            exchange='', routing_key=queue, body=message, properties=
-            pika.BasicProperties(delivery_mode=MQ.MODE, reply_to=callback_queue, correlation_id=correlation_id))
+    def publish(self, queue, message):
+        self.channel.basic_publish(exchange='', routing_key=queue, body=message)
         self.log.info('Publish message to: ' + queue)
 
     @staticmethod
