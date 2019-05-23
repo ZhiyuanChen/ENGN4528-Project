@@ -55,9 +55,9 @@ __CONCURRENT.MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 __NN.VGG_MEAN = np.array([123.68, 116.779, 103.939])
 __NN.CPU_AMOUNT = int(CONFIG.get('Neural Network', 'CPU Amount'))
 __NN.GPU_AMOUNT = int(CONFIG.get('Neural Network', 'GPU Amount'))
-__NN.LANE_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'lane/model')
-__NN.OBST_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'obstacle/model/model.h5')
-__NN.SIGN_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'sign/model')
+__NN.LANE_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'lane/weights/weights.pth')
+__NN.OBST_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'obstacle/weights/weights.h5')
+__NN.SIGN_WEIGHTS_PATH = os.path.join(PROJECT_PATH, 'sign/weights')
 
 
 def load_message(message):
