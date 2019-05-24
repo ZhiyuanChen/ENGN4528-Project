@@ -7,11 +7,11 @@ class TheMaster(Master):
         self.mq.channel.basic_consume(queue=MQ.COMP_RESPONSE, on_message_callback=self.comp_process)
         self.mq.channel.basic_consume(queue=MQ.LANE_RESPONSE, on_message_callback=self.lane_process)
         self.mq.channel.basic_consume(queue=MQ.OBST_RESPONSE, on_message_callback=self.obst_process)
-        self.mq.channel.basic_consume(queue=MQ.SIGN_RESPONSE, on_message_callback=self.sign_process)
-        self.comp_window = cv2.namedWindow('Comprehensive', 0)
-        self.line_window = cv2.namedWindow('Lane Line', 0)
-        self.obst_window = cv2.namedWindow('Obstacle', 0)
-        self.sign_window = cv2.namedWindow('Traffic Sign', 0)
+        # self.mq.channel.basic_consume(queue=MQ.SIGN_RESPONSE, on_message_callback=self.sign_process)
+        self.comp_window = self.window('Comprehensive')
+        self.lane_window = self.window('Lane Line')
+        self.obst_window = self.window('Obstacle')
+        self.comp_window = self.window('Comprehensive')
         self.mq.channel.start_consuming()
 
     def comp_process(self, ch, method, props, body):
@@ -53,6 +53,12 @@ class TheMaster(Master):
             ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
             self.log.error(err)
+
+    @staticmethod
+    def window(window_name='image', window_size=(320, 180)):
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, window_size[0], window_size[1])
+        return window_name
 
 
 def main():
