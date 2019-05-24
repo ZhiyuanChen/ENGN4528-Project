@@ -23,12 +23,13 @@ class Capture(object):
         self.mq.publish(queue, message)
 
     def publish_concurrent(self):
-        data = cv2.imencode('.jpg', self.screen_shot)[1].tostring()
+        windshield = cv2.imencode('.jpg', self.screen_shot[0:490, 0:1200])[1].tostring()
+        dashboard = cv2.imencode('.jpg', self.screen_shot[570:700, 622:1182])[1].tostring()
         try:
-            self.publish(MQ.COMP_REQUEST, data)
-            self.publish(MQ.LANE_REQUEST, data)
-            self.publish(MQ.OBST_REQUEST, data)
-            self.publish(MQ.SIGN_REQUEST, data)
+            self.publish(MQ.COMP_REQUEST, dashboard)
+            self.publish(MQ.LANE_REQUEST, windshield)
+            self.publish(MQ.OBST_REQUEST, windshield)
+            # self.publish(MQ.SIGN_REQUEST, data)
         except Exception as err:
             self.log.error(err)
 

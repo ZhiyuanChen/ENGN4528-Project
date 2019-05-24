@@ -9,25 +9,30 @@ class Image(object):
         self.right_mirror = image[58:296, 1082:1259]
         self.navigation = image[578:683, 246:424]
         self.assistant = image[268:472, 27:287]
-        self.odometer = image[653:662, 626:680]
+        self.dashboard = image[570:700, 622:1182]
+
+
+class Dashboard(object):
+    def __init__(self, image):
+        self.odometer = image[10:60, 87:98]
         self.fuel_gauge = image[612:620, 920:974]
-        self.left_turn = image[565:584, 735:756]
-        self.right_turn = image[565:584, 863:883]
-        self.parking_break = image[565:584, 901:924]
-        self.seat_belt = image[565:585, 927:943]
-        self.battery_charge = image[578:581, 969:982]
-        self.malfunction_indicator = image[679:694, 907:929]
-        self.glow_plug = image[680:694, 907:929]
-        self.light0 = image[567:575, 1108:1120]
-        self.light1 = image[569:577, 1123:1135]
-        self.light2 = image[570:578, 1138:1150]
-        self.light3 = image[570:578, 1154:1170]
-        self.light4 = image[572:578, 1174:1179]
-        self.light5 = image[579:583, 1174:1179]
-        self.failure0 = image[684:693, 624:641]
-        self.failure1 = image[682:694, 647:665]
-        self.failure2 = image[682:693, 670:688]
-        self.failure3 = image[682:693, 693:712]
+        self.left_turn = image[3:17, 116:132]
+        self.right_turn = image[3:17, 244:260]
+        self.parking_break = image[2:17, 282:301]
+        self.seat_belt = image[2:18, 309:317]
+        self.battery_charge = image[10:15, 349:362]
+        self.malfunction_indicator = image[115:128, 287:307]
+        self.glow_plug = image[116:128, 313:329]
+        self.light0 = image[9:15, 83:98]
+        self.light1 = image[2:10, 487:498]
+        self.light2 = image[4:12, 502:514]
+        self.light3 = image[5:12, 517:528]
+        self.light4 = image[6:12, 533:548]
+        self.light5 = image[7:12, 553:557]
+        self.failure0 = image[119:128, 3:20]
+        self.failure1 = image[118:128, 26:44]
+        self.failure2 = image[117:128, 49:67]
+        self.failure3 = image[117:127, 72:91]
 
     @staticmethod
     def is_green(part):
@@ -43,7 +48,7 @@ class Image(object):
 
 
 @unique
-class period(Enum):
+class Period(Enum):
     NotSet = 0
     Spring = 1
     Morning = 2
@@ -54,7 +59,7 @@ class period(Enum):
 
 
 @unique
-class position(Enum):
+class Position(Enum):
     NotSet = 0
     HighSpeed = 1
     State = 2
@@ -77,8 +82,9 @@ class Truck(object):
     # light
     # odometer
     # Fuel gauge
-    def __init__(self, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
-                 speed_limit=0, navigation=0, position=position.NotSet, period=period.NotSet):
+    def __init__(self, seat_belt=0, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
+                 speed_limit=0, navigation=0, position=Position.NotSet, period=Period.NotSet):
+        self._seat_belt = seat_belt
         self._engine_status = engine_status
         self._turn_signal = turn_signal
         self._parking_brake = parking_brake
@@ -91,18 +97,54 @@ class Truck(object):
         self._position = position
         self._period = period
 
-    def init(self, image):
-        image = Image(image)
-        if image.is_green(image.left_turn):
-            if image.is_green(image.right_turn):
+    def dashboard(self, image):
+        dashboard = Dashboard(image)
+        if dashboard.is_green(dashboard.left_turn):
+            if dashboard.is_green(dashboard.right_turn):
                 self.turn_signal = 3
             else:
                 self.turn_signal = 1
-        elif image.is_green(image.right_turn):
+        elif dashboard.is_green(dashboard.right_turn):
             self.turn_signal = 2
         else:
             self.turn_signal = 0
-        self.parking_brake = 1 if image.is_red(image.parking_break) else 0
+        self.parking_brake = 1 if dashboard.is_red(dashboard.parking_break) else 0
+        self.seat_belt = 1 if dashboard.is_red(dashboard.parking_break) else 0
+        if dashboard.is_yellow(dashboard.malfunction_indicator):
+            if dashboard.is_yellow(dashboard.battery_charge):
+                if dashboard.is_yellow(dashboard.failure0) and dashboard.is_yellow(dashboard.failure1) \
+                        and dashboard.is_yellow(dashboard.failure2) and dashboard.is_yellow(dashboard.failure3):
+                    self.engine_status = 1
+                else:
+                    self.engine_status = 2
+            else:
+                self.engine_status = 3
+        elif dashboard.is_yellow(dashboard.battery_charge):
+            if dashboard.is_yellow(dashboard.failure0) and dashboard.is_yellow(dashboard.failure1) \
+                    and dashboard.is_yellow(dashboard.failure2) and dashboard.is_yellow(dashboard.failure3):
+                self.engine_status = 4
+            else:
+                self.engine_status = 5
+        elif dashboard.is_yellow(dashboard.failure0):
+            self.engine_status = 6
+        elif dashboard.is_yellow(dashboard.failure1):
+            self.engine_status = 7
+        elif dashboard.is_yellow(dashboard.failure2):
+            self.engine_status = 8
+        elif dashboard.is_yellow(dashboard.failure3):
+            self.engine_status = 9
+
+    @property
+    def seat_belt(self):
+        return self._seat_belt
+
+    @seat_belt.setter
+    def seat_belt(self, value):
+        self._seat_belt = value
+
+    @seat_belt.deleter
+    def seat_belt(self):
+        del self._seat_belt
 
     @property
     def engine_status(self):
