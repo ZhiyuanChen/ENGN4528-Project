@@ -1,3 +1,5 @@
+# https://github.com/matterport/Mask_RCNN
+# https://github.com/matterport/Mask_RCNN/issues/134
 import cv2
 import numpy as np
 
@@ -28,7 +30,6 @@ class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
 def color_map(N=256, normalized=False):
     def bitget(byteval, idx):
         return (byteval & (1 << idx)) != 0
-
     dtype = 'float32' if normalized else 'uint8'
     cmap = np.zeros((N, 3), dtype=dtype)
     for i in range(N):
@@ -39,32 +40,24 @@ def color_map(N=256, normalized=False):
             g = g | (bitget(c, 1) << 7 - j)
             b = b | (bitget(c, 2) << 7 - j)
             c = c >> 3
-
         cmap[i] = np.array([r, g, b])
-
-    cmap = cmap / 255 if normalized else cmap
+    if normalized:
+        cmap /= 255
     return cmap
 
 
 def draw_result(image, result, show_mask=True, show_bbox=True):
-    coordinates = result['rois']
-    masks = result['masks']
-    class_ids = result['class_ids']
-    scores = result['scores']
-    colors = color_map()
-    for i in range(coordinates.shape[0]):
-        color = colors[class_ids[i]].astype(np.int).tolist()
+    for i in range(result['rois'].shape[0]):
+        color = color_map()[result['class_ids'][i]].astype(np.int).tolist()
         if show_bbox:
-            coordinate = coordinates[i]
-            cls = class_names[class_ids[i] - 1]
-            score = scores[i]
-            cv2.rectangle(image, (coordinate[1], coordinate[0]), (coordinate[3], coordinate[2]), color, 1)
+            cord = result['rois'][i]
+            cv2.rectangle(image, (cord[1], cord[0]), (cord[3], cord[2]), color, 1)
             font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(image, '{}: {:.3f}'.format(cls, score), (coordinate[1], coordinate[0]),
-                        font, 0.4, (0, 255, 255), 1, cv2.LINE_AA)
+            cv2.putText(image, '{}: {:.3f}'.format(class_names[result['class_ids'][i] - 1], result['scores'][i]),
+                        (cord[1], cord[0]), font, 0.4, (0, 255, 255), 1, cv2.LINE_AA)
         if show_mask:
-            mask = masks[:, :, i]
+            mask = result['masks'][:, :, i]
             color_mask = np.zeros((mask.shape[0], mask.shape[1], 3), dtype=np.int)
             color_mask[mask] = color
             image = cv2.addWeighted(color_mask, 0.5, image.astype(np.int), 1, 0)
-    return image
+    return image.astype('uint8')
