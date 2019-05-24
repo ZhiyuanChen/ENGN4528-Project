@@ -29,10 +29,10 @@ class Dashboard(object):
         self.light3 = image[5:12, 517:528]
         self.light4 = image[6:12, 533:548]
         self.light5 = image[7:12, 553:557]
-        self.failure0 = image[119:128, 3:20]
-        self.failure1 = image[118:128, 26:44]
-        self.failure2 = image[117:128, 49:67]
-        self.failure3 = image[117:127, 72:91]
+        self.differential0 = image[119:128, 3:20]
+        self.differential1 = image[118:128, 26:44]
+        self.tandem_axle_lift0 = image[117:128, 49:67]
+        self.tandem_axle_lift1 = image[117:127, 72:91]
 
     @staticmethod
     def is_green(part):
@@ -82,13 +82,16 @@ class Truck(object):
     # light
     # odometer
     # Fuel gauge
-    def __init__(self, seat_belt=0, engine_status=0, turn_signal=0, parking_brake=0, brake=0, light=0, odometer=0, fuel_gauge=0,
-                 speed_limit=0, navigation=0, position=Position.NotSet, period=Period.NotSet):
+    def __init__(self, seat_belt=0, engine_status=0, turn_signal=0, parking_brake=0, brake=0, differential=0,
+                 tandem_axle_lift=0, light=0, odometer=0, fuel_gauge=0, speed_limit=0, navigation=0,
+                 position=Position.NotSet, period=Period.NotSet):
         self._seat_belt = seat_belt
         self._engine_status = engine_status
         self._turn_signal = turn_signal
         self._parking_brake = parking_brake
         self._brake = brake
+        self._differential = differential
+        self._tandem_axle_lift = tandem_axle_lift
         self._light = light
         self._odometer = odometer
         self._fuel_gauge = fuel_gauge
@@ -108,31 +111,39 @@ class Truck(object):
             self.turn_signal = 2
         else:
             self.turn_signal = 0
-        self.parking_brake = 1 if dashboard.is_red(dashboard.parking_break) else 0
-        self.seat_belt = 1 if dashboard.is_red(dashboard.parking_break) else 0
+
         if dashboard.is_yellow(dashboard.malfunction_indicator):
             if dashboard.is_yellow(dashboard.battery_charge):
-                if dashboard.is_yellow(dashboard.failure0) and dashboard.is_yellow(dashboard.failure1) \
-                        and dashboard.is_yellow(dashboard.failure2) and dashboard.is_yellow(dashboard.failure3):
-                    self.engine_status = 1
-                else:
-                    self.engine_status = 2
+                self.engine_status = 1
             else:
-                self.engine_status = 3
+                self.engine_status = 2
         elif dashboard.is_yellow(dashboard.battery_charge):
-            if dashboard.is_yellow(dashboard.failure0) and dashboard.is_yellow(dashboard.failure1) \
-                    and dashboard.is_yellow(dashboard.failure2) and dashboard.is_yellow(dashboard.failure3):
-                self.engine_status = 4
+            self.engine_status = 3
+        else:
+            self.engine_status = 0
+
+        if dashboard.is_yellow(dashboard.differential0):
+            if dashboard.is_yellow(dashboard.differential1):
+                self.differential = 1
             else:
-                self.engine_status = 5
-        elif dashboard.is_yellow(dashboard.failure0):
-            self.engine_status = 6
-        elif dashboard.is_yellow(dashboard.failure1):
-            self.engine_status = 7
-        elif dashboard.is_yellow(dashboard.failure2):
-            self.engine_status = 8
-        elif dashboard.is_yellow(dashboard.failure3):
-            self.engine_status = 9
+                self.differential = 2
+        elif dashboard.is_yellow(dashboard.differential1):
+            self.differential = 3
+        else:
+            self.differential = 0
+
+        if dashboard.is_yellow(dashboard.tandem_axle_lift0):
+            if dashboard.is_yellow(dashboard.tandem_axle_lift1):
+                self.tandem_axle_lift = 1
+            else:
+                self.tandem_axle_lift = 2
+        elif dashboard.is_yellow(dashboard.tandem_axle_lift1):
+            self.tandem_axle_lift = 3
+        else:
+            self.tandem_axle_lift = 0
+
+        self.parking_brake = 1 if dashboard.is_red(dashboard.parking_break) else 0
+        self.seat_belt = 1 if dashboard.is_red(dashboard.parking_break) else 0
 
     @property
     def seat_belt(self):
@@ -181,6 +192,30 @@ class Truck(object):
     @parking_brake.deleter
     def parking_brake(self):
         del self._parking_brake
+
+    @property
+    def differential(self):
+        return self._differential
+
+    @differential.setter
+    def differential(self, value):
+        self._differential = value
+
+    @differential.deleter
+    def differential(self):
+        del self._differential
+
+    @property
+    def tandem_axle_lift(self):
+        return self._tandem_axle_lift
+
+    @tandem_axle_lift.setter
+    def tandem_axle_lift(self, value):
+        self._tandem_axle_lift = value
+
+    @tandem_axle_lift.deleter
+    def tandem_axle_lift(self):
+        del self._tandem_axle_lift
 
     @property
     def brake(self):
