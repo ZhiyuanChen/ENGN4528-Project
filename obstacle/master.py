@@ -1,5 +1,3 @@
-import tensorflow as tf
-
 from globals import Master, load_image, MQ, NN, LOG
 from obstacle import *
 

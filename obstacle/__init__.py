@@ -2,6 +2,7 @@
 # https://github.com/matterport/Mask_RCNN/issues/134
 import cv2
 import numpy as np
+import tensorflow as tf
 
 import obstacle.mrcnn.model as modellib
 from obstacle.mrcnn import coco
@@ -30,6 +31,7 @@ class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
 def color_map(N=256, normalized=False):
     def bitget(byteval, idx):
         return (byteval & (1 << idx)) != 0
+
     dtype = 'float32' if normalized else 'uint8'
     cmap = np.zeros((N, 3), dtype=dtype)
     for i in range(N):
