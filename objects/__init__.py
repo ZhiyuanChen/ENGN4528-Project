@@ -37,7 +37,7 @@ class Dashboard(object):
     @staticmethod
     def is_blue(part):
         indicate = False
-        if part[:, :, 0].mean() > 40:
+        if part[:, :, 0].mean() > 60:
             part[:, :, 0] = 255
             indicate = True
         return indicate
@@ -45,7 +45,7 @@ class Dashboard(object):
     @staticmethod
     def is_red(part):
         indicate = False
-        if part[:, :, 2].mean() > 40:
+        if part[:, :, 2].mean() > 60:
             part[:, :, 2] = 255
             indicate = True
         return indicate
@@ -53,7 +53,7 @@ class Dashboard(object):
     @staticmethod
     def is_green(part):
         indicate = False
-        if part[:, :, 1].mean() > 40:
+        if part[:, :, 1].mean() > 60:
             part[:, :, 1] = 255
             indicate = True
         return indicate
@@ -61,7 +61,7 @@ class Dashboard(object):
     @staticmethod
     def is_yellow(part):
         indicate = False
-        if (part[:, :, 1] + part[:, :, 2]).mean() > 80:
+        if (0.4*part[:, :, 1] + part[:, :, 2]).mean() > 120:
             part[:, :, 1] = 255
             part[:, :, 2] = 255
             indicate = True
