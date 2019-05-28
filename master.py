@@ -16,41 +16,41 @@ class TheMaster(Master):
 
     def comp_process(self, ch, method, props, body):
         try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             self.log.info(method.routing_key + ' received message')
             image = load_image(body)
             cv2.imshow(self.comp_window, image)
             cv2.waitKey(1)
-            ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
             self.log.error(err)
 
     def lane_process(self, ch, method, props, body):
         try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             self.log.info(method.routing_key + ' received message')
             image = load_image(body)
             cv2.imshow(self.lane_window, image)
             cv2.waitKey(1)
-            ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
             self.log.error(err)
 
     def obst_process(self, ch, method, props, body):
         try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             self.log.info(method.routing_key + ' received message')
             image = load_image(body)
             cv2.imshow(self.obst_window, image)
             cv2.waitKey(1)
-            ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
             self.log.error(err)
 
     def sign_process(self, ch, method, props, body):
         try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             self.log.info(method.routing_key + ' received message')
             image = load_image(body)
             cv2.imshow(self.sign_window, image)
             cv2.waitKey(1)
-            ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
             self.log.error(err)
 
