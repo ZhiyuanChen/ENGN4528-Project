@@ -49,6 +49,7 @@ __MQ.OBST_RESPONSE = CONFIG.get('Message Queue', 'Obstacle Response Queue')
 __MQ.SIGN_REQUEST = CONFIG.get('Message Queue', 'Sign Request Queue')
 __MQ.SIGN_RESPONSE = CONFIG.get('Message Queue', 'Sign Response Queue')
 __MQ.PREFETCH_NUM = int(CONFIG.get('Message Queue', 'Consume Number'))
+__MQ.TTL = 1
 # Initial global variables for concurrency
 __CONCURRENT.MAX_WORKER = int(CONFIG.get('Concurrency', 'Max Workers'))
 # Initial global variables for neural network
@@ -136,14 +137,14 @@ class MessageQueue(object):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
             host=MQ.HOST, port=MQ.PORT, virtual_host=MQ.VHOST, credentials=pika.PlainCredentials(MQ.USNM, MQ.PSWD)))
         self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=MQ.COMP_REQUEST, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.COMP_RESPONSE, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.LANE_REQUEST, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.LANE_RESPONSE, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.OBST_REQUEST, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.OBST_RESPONSE, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.SIGN_REQUEST, durable=MQ.DURABLE)
-        self.channel.queue_declare(queue=MQ.SIGN_RESPONSE, durable=MQ.DURABLE)
+        self.channel.queue_declare(queue=MQ.COMP_REQUEST, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.COMP_RESPONSE, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.LANE_REQUEST, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.LANE_RESPONSE, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.OBST_REQUEST, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.OBST_RESPONSE, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.SIGN_REQUEST, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
+        self.channel.queue_declare(queue=MQ.SIGN_RESPONSE, durable=MQ.DURABLE, arguments={'x-message-ttl': MQ.TTL})
         self.log = Log('message_queue')
 
     def publish(self, queue, message):
