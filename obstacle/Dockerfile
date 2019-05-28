@@ -26,7 +26,10 @@ RUN conda config --append channels conda-forge
 RUN conda install -y python=${python_version} && \
     pip install --upgrade pip && \
     pip install \
+      pika \
       tensorflow-gpu \
+      imgaug \
+      pycocotools \
       && \
     conda install \
       pygpu \

@@ -1,12 +1,17 @@
 FROM pytorch/1.1.0-cuda10.0-cudnn7.5-devel
 
 
-RUN conda install -y -c \
-  pygpu \
-  pyyaml \
-  opencv3 \
-  numpy \
-
+RUN pip install --upgrade pip && \
+    pip install \
+      pika \
+      tensorflow-gpu \
+      && \
+    conda install -y -c \
+        pygpu \
+        pyyaml \
+        opencv3 \
+        numpy \
+      && \
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
