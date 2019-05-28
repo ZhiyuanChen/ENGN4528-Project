@@ -14,6 +14,7 @@ class LaneMaster(Master):
 
     def process(self, ch, method, props, body):
         try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             self.log.info(method.routing_key + ' received message')
             image = cv2.cvtColor(load_image(body), cv2.COLOR_BGR2RGB)
             x = transform(image)[0]

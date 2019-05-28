@@ -28,7 +28,7 @@ class TheMaster(Master):
         try:
             self.log.info(method.routing_key + ' received message')
             image = load_image(body)
-            cv2.imshow(self.line_window, image)
+            cv2.imshow(self.lane_window, image)
             cv2.waitKey(1)
             ch.basic_ack(delivery_tag=method.delivery_tag)
         except Exception as err:
@@ -55,7 +55,7 @@ class TheMaster(Master):
             self.log.error(err)
 
     @staticmethod
-    def window(window_name='image', window_size=(320, 180)):
+    def window(window_name='image', window_size=(640, 360)):
         cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
         cv2.resizeWindow(window_name, window_size[0], window_size[1])
         return window_name
