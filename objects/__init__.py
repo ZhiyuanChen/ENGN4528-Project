@@ -35,16 +35,37 @@ class Dashboard(object):
         self.tandem_axle_lift1 = image[117:127, 72:91]
 
     @staticmethod
-    def is_green(part):
-        return True if part[1].mean() > 10 else False
+    def is_blue(part):
+        indicate = False
+        if part[:, :, 0].mean() > 40:
+            part[:, :, 0] = 255
+            indicate = True
+        return indicate
 
     @staticmethod
     def is_red(part):
-        return True if part[2].mean() > 10 else False
+        indicate = False
+        if part[:, :, 2].mean() > 40:
+            part[:, :, 2] = 255
+            indicate = True
+        return indicate
+
+    @staticmethod
+    def is_green(part):
+        indicate = False
+        if part[:, :, 1].mean() > 40:
+            part[:, :, 1] = 255
+            indicate = True
+        return indicate
 
     @staticmethod
     def is_yellow(part):
-        return True if (part[1] + part[2]).mean() > 10 else False
+        indicate = False
+        if (part[:, :, 1] + part[:, :, 2]).mean() > 80:
+            part[:, :, 1] = 255
+            part[:, :, 2] = 255
+            indicate = True
+        return indicate
 
 
 @unique
@@ -114,11 +135,21 @@ class Truck(object):
 
         if dashboard.is_yellow(dashboard.malfunction_indicator):
             if dashboard.is_yellow(dashboard.battery_charge):
-                self.engine_status = 1
+                if dashboard.is_yellow(dashboard.glow_plug):
+                    self.engine_status = 1
+                else:
+                    self.engine_status = 2
+            elif dashboard.is_yellow(dashboard.glow_plug):
+                self.engine_status = 3
             else:
-                self.engine_status = 2
+                self.engine_status = 5
         elif dashboard.is_yellow(dashboard.battery_charge):
-            self.engine_status = 3
+            if dashboard.is_yellow(dashboard.glow_plug):
+                self.engine_status = 4
+            else:
+                self.engine_status = 6
+        elif dashboard.is_yellow(dashboard.glow_plug):
+            self.engine_status = 7
         else:
             self.engine_status = 0
 
@@ -144,6 +175,7 @@ class Truck(object):
 
         self.parking_brake = 1 if dashboard.is_red(dashboard.parking_break) else 0
         self.seat_belt = 1 if dashboard.is_red(dashboard.parking_break) else 0
+        return image
 
     @property
     def seat_belt(self):

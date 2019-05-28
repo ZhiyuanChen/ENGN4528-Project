@@ -10,12 +10,15 @@ class CompMaster(Master):
         self.mq.channel.start_consuming()
 
     def process(self, ch, method, props, body):
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-        self.log.info(method.routing_key + ' received message')
-        image = load_image(body)
-        self.truck.dashboard(image)
-        data = cv2.imencode('.jpg', image)[1].tostring()
-        self.mq.publish(MQ.COMP_RESPONSE, data)
+        try:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            self.log.info(method.routing_key + ' received message')
+            image = load_image(body)
+            image = self.truck.dashboard(image)
+            data = cv2.imencode('.jpg', image)[1].tostring()
+            self.mq.publish(MQ.COMP_RESPONSE, data)
+        except Exception as err:
+            self.log.error(err)
 
     @staticmethod
     def draw_result(image, truck):
