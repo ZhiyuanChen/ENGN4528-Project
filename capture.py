@@ -34,10 +34,13 @@ class Capture(object):
             self.log.error(err)
 
     def process(self):
-        t = time.time()
-        self.capture()
-        self.publish_concurrent()
-        print(time.time()-t)
+        try:
+            t = time.time()
+            self.capture()
+            self.publish_concurrent()
+            print(time.time()-t)
+        except Exception as err:
+            self.log.error(err)
 
 
 def main():
