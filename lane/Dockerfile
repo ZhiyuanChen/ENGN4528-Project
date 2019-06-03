@@ -1,17 +1,14 @@
 FROM pytorch/1.1.0-cuda10.0-cudnn7.5-devel
 
 
-RUN pip install --upgrade pip && \
-    pip install \
-      pika \
-      tensorflow-gpu \
-      && \
-    conda install -y -c \
-        pygpu \
-        pyyaml \
-        opencv3 \
-        numpy \
-      && \
+RUN conda install -y -c \
+  pygpu \
+  pyyaml \
+  opencv3 \
+  numpy \
+  && \
+
+ADD theanorc /home/keras/.theanorc
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
@@ -19,13 +16,15 @@ ENV LANG=C.UTF-8
 ENV PYTHONPATH='/src/:$PYTHONPATH'
 
 
-ENV LANE=/usr/local/lane
-RUN mkdir $LANE
-COPY ./global $LANE/global
-COPY ./objects /$LANE/objects
-COPY ./lane /$LANE/lane
+ENV EMARKING=/usr/local/emarking
+RUN mkdir $EMARKING
+COPY ./build/script $EMARKING/script
+COPY ./models /opt/models
+COPY ./build/lib/engine_python.so  /usr/local/lib/python2.7/dist-packages/engine_python.so
+COPY ./build/tesseract/chi_sim.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
+
 
 VOLUME ["/home/vol"]
-WORKDIR $LANE/
+WORKDIR $EMARKING/script
 
-ENTRYPOINT ["bash", "-c", "python $LANE/lane/master.py"]
+ENTRYPOINT ["bash", "-c", "python $EMARKING/script/TestPaperManager.py"]
