@@ -13,15 +13,17 @@
 % \linenumbers
 \pagestyle{headings}
 \mainmatter
-\def\ECCV18SubNumber{31}  % Insert your submission number here
+\def\ECCV18SubNumber{31}
 
-\title{Self-Driving Assistant in Computer Simulation Environment} % Replace with your title
+\title{Self-Driving Assistant in Computer Simulation 
+Environment}
 
 \titlerunning{ENGN4528 Group \ECCV18SubNumber}
 
 \authorrunning{ENGN4528 Group \ECCV18SubNumber}
 
-\author{Zhiyuan Chen, Xingyuan Xu, Qiusi Xiang, Bisyri Hisham, Kavinenh Mohanraj}
+\author{Zhiyuan Chen, Xingyuan Xu, Qiusi Xiang, Bisyri 
+Hisham, Kavinenh Mohanraj}
 \institute{Australian National University}
 
 
@@ -39,21 +41,34 @@ System
 
 \section{Introduction}
 Self-driving technologies had been used in airplanes (known 
-as AP for Auto Pilot), and trains (known as ATO for Automatic 
-Train Operation) for many years. However, as the road traffic
-is far more complex, self-driving cars had never been in 
-actual use. Thanks to the development of Machine Learning 
-and Computer Vision, self-driving cars does not seem to be 
-impossible nowadays. Thus, we would like to design a 
-self-driving assistant program in the computer simulation 
-environment.
+as AP for Auto Pilot), and trains (known as ATO for 
+Automatic Train Operation) for decades. However, as the 
+road traffic is far more complex, self-driving cars have 
+never been in commerical use. Thanks to the development of 
+Machine Learning, Computer Vision and most importantly the 
+hardwares, self-driving cars does not seem to be impossible 
+today. Thus, we designed a self-driving assistant program 
+in the computer simulation environment.
 
 The best performed models were chosen for this project to 
 achieve the best performance. 
 
-
 \section{Pre Process}
+\subsection{Screenshot}
+Taking a screenshot can be harder than it looks. 
+ImageGrab.grab() from PIL is a good approach. However, 
+it costs 300-400ms to take a single screenshot which is 
+obviously unacceptable. We test many different functions 
+from different package, as a result, Python-MSS is much 
+faster than any other package in the comparison with a 
+average speed of 60fps.
 
+\subsection{Transmission}
+Transmitting images between each cluster is another key 
+point. The delayness can be devided to two part, the 
+encode(serialize)/decode(deserialize) time and the 
+transmission time. We tried three different ways to encode 
+our image, pickle, json, and imencode. 
 
 \section{Process}
 
