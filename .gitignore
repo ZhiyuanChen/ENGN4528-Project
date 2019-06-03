@@ -356,6 +356,8 @@ healthchecksdb
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
+*.bbl
+*.blg
 *.lof
 *.log
 *.lot
@@ -367,6 +369,8 @@ healthchecksdb
 *.cb
 *.cb2
 .*.lb
+*.fdb_latexmk
+*.synctex.gz
 
 ## Intermediate documents:
 *.dvi
@@ -377,3 +381,4 @@ healthchecksdb
 images/
 videos/
 logs/
+README.*
