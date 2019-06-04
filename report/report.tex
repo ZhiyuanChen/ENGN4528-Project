@@ -113,31 +113,7 @@ demonstrated
 \subsection{Obstacle Detection}
 
 
-\section{Distributed System}
-
-\subsection{Message-Oriented Middleware}
-Message-Oriented Middleware or MOM was used to transmit 
-data between each cluster and is the core of the whole 
-distributed system. MOM deliver messages asynchronously 
-which benefits us a alot. It allow us to remove 
-dependencies between each algorithm and decouple our 
-program. Moreover, it also increase the reliability of our 
-program, since the system would continue to work even 
-though one or more of the algorithms encountered fatal 
-problems and unable to recover.
-
-Message Queue was used in our program as the MOM. We 
-compared many message queues, including kafka, RabbitMQ, 
-NATS, and Redis to find the best performed message queue 
-in latency. As Advanced Message Queueing Protocol 
-implementation, kafka and RabbitMQ are a lot slower than 
-Redis and NATS in 1KB and 5KB text. However, when it comes
-to 1MB text, RabbitMQ and kafka are 200 times faster than 
-NATS and Redis in 99.99th percentile. At last, we chose 
-RabbitMQ as our MOM since it works slightly better in large 
-message transmission. In addition, to improve the real-time 
-capabilities, a Time To Live limit is set to 1 millisecond.
-
+\section{Distributed Scheduling}
 
 \subsection{Containerization}
 Containerization has been widely used in many industries. 
