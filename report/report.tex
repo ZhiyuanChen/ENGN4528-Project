@@ -54,7 +54,7 @@ Self-driving technologies had been used in airplanes (known
 as AP for Auto Pilot), and trains (known as ATO for 
 Automatic Train Operation) for decades. However, as the 
 road traffic is far more complex, self-driving cars have 
-never been in commerical use. Thanks to the development of 
+never been in commercial use. Thanks to the development of 
 Machine Learning, Computer Vision and most importantly the 
 hardwares, self-driving cars does not seem to be impossible 
 today. Thus, we designed a self-driving assistant program 
@@ -75,7 +75,7 @@ average speed of 60fps, and was used at last.
 \subsection{Encode \& Decode}
 As we are using message queue as our message-oriented 
 middleware, we must encode(serialize) the image prior to 
-transimission and decode(deserialize) upon receive message. 
+transmission and decode(deserialize) upon receive message. 
 We tried three different ways to encode our image, JSON, 
 pickle, and imencode. 
 
@@ -98,7 +98,7 @@ The Joint Photographic Experts Group issued a synonym
 standard for still pictures compression in 1992, after 
 27 years, the JPEG algorithm had became the most commonly 
 used algorithm in image compression on this planet. OpenCV 
-provides a built-in fucntion, i.e. imencode, which can 
+provides a built-in function, i.e. imencode, which can 
 convert a image from ndarray to byte stream within 
 milliseconds. And more importantly, thanks to JPEG 
 algorithm, the size of message is also ideal. 
@@ -107,11 +107,33 @@ algorithm, the size of message is also ideal.
 \section{Worker Process}
 
 \subsection{Lane Line Detection}
+Lane line detection has always been one of the most 
+important part of self-driving. This is easy to understand 
+since driving off road usually means crash and severe 
+injury. 
 
-Spatial CNN was introduced by Pan in 2017. They 
+Traditionally, we first use affine transformation to obtain 
+the aerial view of the lane line. Then, we use edge 
+detector, e.g. Canny, Sobel, as well as gradient to enhance 
+the image. After the image process, we use sliding windows 
+to locate the lane line. At last, we project the lane line 
+back to the original image, and calculate radius, and 
+distance to center. 
+
+However, the traditional strategy does not have steady 
+outputs, it would be easily influenced by curved roads, 
+shadows and others. It can neither process rural roads or 
+trails without actual lines on the ground. Thus, most 
+modern lane line detector use convolutional neural network 
+instead, we are no exception. 
+
+LaneNet was suggested by Wang\cite{LaneNet} in 2018. 
+
+Spatial CNN was proposed by Pan\cite{SpatialCNN} in 2017. They 
 demonstrated
 
 \subsection{Obstacle Detection}
+R-CNN 
 
 
 \section{Distributed System}
@@ -120,7 +142,7 @@ demonstrated
 Message-Oriented Middleware or MOM was used to transmit 
 data between each cluster and is the core of the whole 
 distributed system. MOM deliver messages asynchronously 
-which benefits us a alot. It allow us to remove 
+which benefits us a a lot. It allow us to remove 
 dependencies between each algorithm and decouple our 
 program. Moreover, it also increase the reliability of our 
 program, since the system would continue to work even 
@@ -153,7 +175,7 @@ in this project to containerize our algorithm. Compare to
 other containerization strategy, e.g. LXD, Docker focused 
 on running a program instead of a whole system which make 
 it easier to use. In addition, Docker also support multiple 
-system which is more convinent for development. And most 
+system which is more convenient for development. And most 
 importantly the nvidia-docker make Docker more compatible 
 with neural networks.
 
@@ -165,7 +187,7 @@ first as it is built in the Docker CE but soon deprecated
 since Docker Swarm does not even provide basic heal-checks 
 and auto-rollback. Rancher provides more useful functions, 
 however, since it does not have good support on 
-nvidia-docker, we decided to use kubernetes as our 
+nvidia-docker, we decided to use Kubernetes as our 
 container orchestration platform at last.
 
 
