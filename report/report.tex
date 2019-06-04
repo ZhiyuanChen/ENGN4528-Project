@@ -144,11 +144,20 @@ Containerization has been widely used in many industries.
 Compare to traditional virtual machine, the performance 
 and resources loss are reduced to a large extent benefits 
 from removing the guest OS and hardware virtualization. 
-Docker, as the most popular container platform, are used here
-in this project to containerlize our algorithm so that 
+Moreover, using container would also reduce the effort to 
+deploy in future works. 
 
+Docker, the most popular container platform, are used here 
+in this project to containerize our algorithm. Compare to 
+other containerization strategy, e.g. LXD, Docker focused 
+on running a program instead of a whole system which make 
+it easier to use. In addition, Docker also support multiple 
+system which is more convinent for development. And most 
+importantly the nvidia-docker make Docker more compatible 
+with neural networks.
 
 \subsection{Container Orchestration}
+
 
 \section{Conclusions}
 
