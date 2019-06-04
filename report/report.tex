@@ -38,12 +38,14 @@ Hisham, Kavinenh Mohanraj}
 % [2]: Whitespace at the end of the line does not count
 
 \begin{abstract}
-This project implement a self-driving assistant in computer 
-simulation environment with Spatial CNN and Mask RCNN on a 
-distributed system.
+This project implements a self-driving assistant in 
+computer simulation environment with Spatial CNN for lane 
+line detection and Mask R-CNN for objects detection on a 
+distributed system based on RabbitMQ, Docker, and 
+Kubernetes.
 \dots
-\keywords Self-Driving, Spatial CNN, Mask RCNN, Distributed 
-System
+\keywords Self-Driving, Spatial CNN, Mask R-CNN, 
+Distributed System
 \end{abstract}
 
 
@@ -56,10 +58,9 @@ never been in commerical use. Thanks to the development of
 Machine Learning, Computer Vision and most importantly the 
 hardwares, self-driving cars does not seem to be impossible 
 today. Thus, we designed a self-driving assistant program 
-in the computer simulation environment. 
+which detects the lane line and objects in a computer 
+simulation environment. 
 
-The best performed models were chosen for this project to 
-achieve the best performance. 
 
 \section{Local Process}
 \subsection{Screenshot}
@@ -157,6 +158,15 @@ importantly the nvidia-docker make Docker more compatible
 with neural networks.
 
 \subsection{Container Orchestration}
+As our application runs on multiple containers, a container 
+orchestration platform which can help us manage and scale 
+our containers is also necessary. Docker Swarm was tried 
+first as it is built in the Docker CE but soon deprecated 
+since Docker Swarm does not even provide basic heal-checks 
+and auto-rollback. Rancher provides more useful functions, 
+however, since it does not have good support on 
+nvidia-docker, we decided to use kubernetes as our 
+container orchestration platform at last.
 
 
 \section{Conclusions}
