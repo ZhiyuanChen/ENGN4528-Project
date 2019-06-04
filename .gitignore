@@ -382,3 +382,8 @@ images/
 videos/
 logs/
 README.*
+
+# Weights
+weights.*
+*.h5
+*.pth
