@@ -4,8 +4,8 @@ from globals import Master, load_image, MQ, cv2, time
 class TheMaster(Master):
     def __init__(self):
         super(TheMaster, self).__init__()
-        self.mq.channel.basic_consume(queue=MQ.COMP_RESPONSE, on_message_callback=self.comp_process)
-        self.mq.channel.basic_consume(queue=MQ.LANE_RESPONSE, on_message_callback=self.lane_process)
+        self.mq.channel.basic_consume(queue=MQ.COMP_RESPONSE, on_message_callback=self.test)
+        self.mq.channel.basic_consume(queue=MQ.LANE_RESPONSE, on_message_callback=self.test)
         self.mq.channel.basic_consume(queue=MQ.OBST_RESPONSE, on_message_callback=self.obst_process)
         # self.mq.channel.basic_consume(queue=MQ.SIGN_RESPONSE, on_message_callback=self.sign_process)
         self.comp_window = self.window('Comprehensive', (850, 200))
@@ -13,6 +13,11 @@ class TheMaster(Master):
         self.obst_window = self.window('Obstacle', (426, 340))
         # self.comp_window = self.window('Lane')
         self.mq.channel.start_consuming()
+
+    def test(self, ch, method, props, body):
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        image = load_image(body)
+        print(time.time())
 
     def comp_process(self, ch, method, props, body):
         try:

@@ -149,7 +149,6 @@ class MessageQueue(object):
 
     def publish(self, queue, message):
         self.channel.basic_publish(exchange='', routing_key=queue, body=message)
-        self.log.info('Publish message to: ' + queue)
 
     @staticmethod
     def host():

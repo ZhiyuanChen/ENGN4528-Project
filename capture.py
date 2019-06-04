@@ -29,23 +29,22 @@ class Capture(object):
             self.publish(MQ.COMP_REQUEST, dashboard)
             self.publish(MQ.LANE_REQUEST, windshield)
             self.publish(MQ.OBST_REQUEST, windshield)
+            print(time.time())
             # self.publish(MQ.SIGN_REQUEST, data)
         except Exception as err:
             self.log.error(err)
 
     def process(self):
         try:
-            t = time.time()
             self.capture()
             self.publish_concurrent()
-            print(time.time()-t)
         except Exception as err:
             self.log.error(err)
 
 
 def main():
     capture = Capture()
-    while(True):
+    for item in range(100):
         capture.process()
 
 

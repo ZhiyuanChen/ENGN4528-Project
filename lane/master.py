@@ -1,26 +1,27 @@
 from lane import *
 
-from globals import Master, Vernie, traceback, load_image, MQ, NN, cv2
+from globals import Master, Vernie, traceback, load_image, MQ, NN, cv2, time
 
 
 class LaneMaster(Master):
     def __init__(self):
         super(LaneMaster, self).__init__(MQ.LANE_REQUEST)
-        self.model = SCNN(pretrained=False)
-        self.model.load_state_dict(torch.load(NN.LANE_WEIGHTS_PATH, map_location='cpu')['net'])
-        self.model.eval()
+        # self.model = SCNN(pretrained=False)
+        # self.model.load_state_dict(torch.load(NN.LANE_WEIGHTS_PATH, map_location='cpu')['net'])
+        # self.model.eval()
         self.mq.channel.basic_consume(queue=MQ.LANE_REQUEST, on_message_callback=self.process)
         self.mq.channel.start_consuming()
 
     def process(self, ch, method, props, body):
         try:
             ch.basic_ack(delivery_tag=method.delivery_tag)
-            self.log.info(method.routing_key + ' received message')
+            #self.log.info(method.routing_key + ' received message')
             image = cv2.cvtColor(load_image(body), cv2.COLOR_BGR2RGB)
-            x = transform(image)[0]
-            x.unsqueeze_(0)
-            result = self.model(x)[:2]
-            image = self.draw_result(image, result)
+            print(time.time())
+            # x = transform(image)[0]
+            # x.unsqueeze_(0)
+            # result = self.model(x)[:2]
+            # image = self.draw_result(image, result)
             data = cv2.imencode('.jpg', image)[1].tostring()
             self.mq.publish(MQ.LANE_RESPONSE, data)
         except Exception as err:
