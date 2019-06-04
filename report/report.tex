@@ -29,6 +29,14 @@ Hisham, Kavinenh Mohanraj}
 
 \maketitle
 
+% FORMAT GUIDE
+% No more than 60 characters in a single line [1][2]
+% All lines must ends with a whitespace
+% Every section ends with two empty lines
+% Every subsection ends with a empty line
+% [1]: Punctuation at the end of the line does not count
+% [2]: Whitespace at the end of the line does not count
+
 \begin{abstract}
 This project implement a self-driving assistant in computer 
 simulation environment with Spatial CNN and Mask RCNN on a 
@@ -48,12 +56,12 @@ never been in commerical use. Thanks to the development of
 Machine Learning, Computer Vision and most importantly the 
 hardwares, self-driving cars does not seem to be impossible 
 today. Thus, we designed a self-driving assistant program 
-in the computer simulation environment.
+in the computer simulation environment. 
 
 The best performed models were chosen for this project to 
 achieve the best performance. 
 
-\section{Pre Process}
+\section{Local Process}
 \subsection{Screenshot}
 Taking a screenshot can be harder than it looks. 
 ImageGrab.grab() from PIL is a good approach. However, 
@@ -61,23 +69,45 @@ it costs 300-400ms to take a single screenshot which is
 obviously unacceptable. We test many different functions 
 from different package, as a result, Python-MSS is much 
 faster than any other package in the comparison with a 
-average speed of 60fps.
+average speed of 60fps, and was used at last.
 
-\subsection{Transmission}
-Transmitting images between each cluster is another key 
-point. The delayness can be devided to two part, the 
-encode(serialize)/decode(deserialize) time and the 
-transmission time. We tried three different ways to encode 
-our image, pickle, json, and imencode. 
+\subsection{Encode \& Decode}
+As we are using message queue as our message-oriented 
+middleware, we must encode(serialize) the image prior to 
+transimission and decode(deserialize) upon receive message. 
+We tried three different ways to encode our image, JSON, 
+pickle, and imencode. 
 
-\section{Process}
+JSON is widely used in message queue, however, as ndarray 
+used for image cannot be directly convert to JSON, we have 
+to serialize the image first. Multiple attempts had been 
+made, we succeed to encode image in milliseconds at last, 
+unfortunately, we could not decode the image fast enough 
+and we had to abandon JSON. 
+
+Directly pack the image using pickle can be another method, 
+we tried cPickle here instead for better performance. The 
+encode and decode speed is the best among all methods, 
+however, the size of the message is also several times 
+larger than the size of the image. Messages of this size 
+would place a heavy burden on the network, and was finally 
+deprecated. 
+
+The Joint Photographic Experts Group issued a synonym 
+standard for still pictures compression in 1992, after 
+27 years, the JPEG algorithm had became the most commonly 
+used algorithm in image compression on this planet. OpenCV 
+provides a built-in fucntion, i.e. imencode, which can 
+convert a image from ndarray to byte stream within 
+milliseconds. And more importantly, thanks to JPEG 
+algorithm, the size of message is also ideal. 
+
+
+\section{Worker Process}
 
 \subsection{Lane Line Detection}
 
 \subsection{Obstacle Detection}
-
-
-\section{Post Process}
 
 
 \section{Distributed Scheduling}
@@ -99,5 +129,5 @@ in this project to containerlize our algorithm so that
 \clearpage
 
 \bibliographystyle{splncs}
-\bibliography{egbib}
+\bibliography{bib}
 \end{document}
