@@ -61,6 +61,8 @@ today. Thus, we have designed a self-driving assistant
 program which detects the lane line and objects in a 
 computer simulation environment. 
 
+Convolutional Neural Network (CNN) 
+
 
 \section{Manager Process}
 \subsection{Screenshot}
@@ -149,19 +151,19 @@ LaneNet was suggested by Wang et al.\cite{LaneNet} in 2018.
 They proposed to cast the lane detection problem as an 
 instance segmentation problem so that it can be trained 
 end-to-end which could better cope with lane changes. 
-They split the image to background and lanes instead of 
+They splited the image to background and lanes instead of 
 assigning different classes to different lanes. By doing so, 
 they were able to solve the problems of lane switching and 
 limitation of the number of lanes. They started by binary 
-segmenting the lane line with background first. They then
+segment the lane line with background first. They then 
 connected all ground-truth lane points together to form a 
 connected line per lane so that it would work well even 
-though the lane line were occluded by objects such as 
-vehicles. Then, they instance segmented the lane line with 
-each other using a one-shot method based on distance metric 
-learning. Such a method used a clustering loss function to 
-cluster points into lanes by means of the distances between 
-pixel embeddings.
+though the lane line were occluded by objects like vehicles. 
+Then, they instance segmented the lane line with each other 
+using a one-shot method based on distance metric learning. 
+Such a method used a clustering loss function to cluster 
+points into lanes by means of the distances between pixel 
+embeddings.
 
  
 \begin{figure}
@@ -204,12 +206,12 @@ accuracy.
 	\end{tabular}
 \end{table}
 
-After the comparison, we found that SCNN works better than 
+After comparison, we found that SCNN works better than 
 LaneNet in both speed and accuracy. Thus, we chose to use 
-the SCNN in our project. The results of lane line detection 
+the SCNN in our project. The results of Lane Line detection 
 are listed in the second row of the images in figure 8, 
 which are mostly ideal. However, the generalization ability 
-of SCNN is not as good as MRCNN which will be introduced 
+of SCNN is not as good as MRCNN which will be introduce 
 later. 
 
 
@@ -221,8 +223,8 @@ based considerably on the use of histograms of oriented
 gradients (HOG)\cite{HOG}, and Scale-Invariant Feature 
 Transform (SIFT)\cite{SIFT}. However, as the recognition of 
 brain occurs in several stages downstream, we could assume 
-that a hierarchical, multi-stage algorithm can perform better 
-in the recognition task. 
+that a hierarchical, multi-stage algorithm can do better in 
+the recognition task. 
 
 The work of Girshick et al. on R-CNN showed us a new 
 approach in pattern recognition. Compared to classification 
@@ -281,9 +283,9 @@ the mask.
 \end{figure}
 
 Since the MRCNN outputs the result of segmentation and 
-detection in parallel, the result would be better. Thus, 
+detection in parallel, the result can be better. Thus, 
 we chose to use MRCNN in this project to detect objects.
-The results of object detection are listed in the third row 
+The results of Object detection are listed in the third row 
 of the images in figure 8, which are nearely perfect. 
 Strong generalization ability makes it cope excellently 
 with every dataset we tested. 
@@ -352,10 +354,10 @@ support in nvidia-docker, we chose Kubernetes as our
 container orchestration platform at last.
 
 
-\section{Conclusions}
+\section{Conclusion}
 In this project, we implemented a self-driving assistant 
 program which detects the lane lines and objects. We 
-compared different algorithms and have used the best performed 
+compared different algorithms and used the best performed 
 model as for now. In addition, with the advanced tools of 
 RabbitMQ, Docker, and Kubernetes, we implemented a 
 distributed system to manage and run our algorithms. We 
@@ -365,13 +367,13 @@ capture exception information in case of extreme situations
 for future improvements. As a result, our program is able 
 to run with high performances and high availabilities. 
 
-\subparagraph{Outlook}
+\subsection{Future Work}
 In the future, we would like to improve our algorithms by 
 transfer learning. Besides, we spent 37 milliseconds on 
 average to transmit data between manager and worker, which 
 suggests that there is still space for improvements. 
 
-\subparagraph{Acknowledgement}
+\subsection{Acknowledgement}
 We would like to offer our sincerest appreciation to 
 Hondong Li, the lecturer and convenor of this course as 
 well as Ziang Cheng, and Kaiyue Lu, the tutor of this 
@@ -380,7 +382,7 @@ Yu Cui from the Peking University for her continued support,
 without whom, we could not finish this project. 
 
 
-\paragraph{Appendix}
+\section{Appendix}
 \begin{figure}[!htb]
 	\minipage{0.32\textwidth}
 	Original Image
