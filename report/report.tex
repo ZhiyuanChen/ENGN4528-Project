@@ -146,6 +146,11 @@ instance segment the lane line with each other using a
 one-shot method based on distance metric learning. It use a 
 clustering loss function to cluster points into lanes using 
 the distance between pixel embeddings. 
+\begin{figure}
+    \centering
+    \includegraphics[width=8cm]{reference/lanenet}
+    \label{fig:example}
+\end{figure}
 
 Spatial CNN (SCNN) was proposed by Pan et al.
 \cite{SpatialCNN} in 2017. They generalize traditional 
@@ -156,6 +161,11 @@ It allows space information to propagate in the same layer
 and make SCNN much more suitable to recognize structure 
 objects. As a result, Spatial CNN won the TuSimple Lane 
 Detection Challenge with 96.53\%. 
+\begin{figure}
+    \centering
+    \includegraphics[width=8cm]{reference/scnn}
+    \label{fig:example}
+\end{figure}
 
 After comparison, we found that SCNN works better than 
 LaneNet in both speed and accuracy. Thus, we chose to use 
