@@ -109,7 +109,7 @@ algorithm, the size of message is also ideal.
 \subsection{Lane Line Detection}
 Lane line detection has always been one of the most 
 important part of self-driving. This is easy to understand 
-since driving off road usually means crash and severe 
+since driving off road usually means crash, and severe 
 injury. 
 
 Traditionally, we first use affine transformation to obtain 
@@ -122,32 +122,81 @@ distance to center.
 
 However, the traditional strategy does not have steady 
 outputs, it would be easily influenced by curved roads, 
-shadows and others. It can neither process rural roads or 
+shadows, and others. It can neither process rural roads or 
 trails without actual lines on the ground. Thus, most 
 modern lane line detector use convolutional neural network 
-instead, we are no exception. 
+(CNN) instead, we are no exception. 
 
-LaneNet was suggested by Wang\cite{LaneNet} in 2018. 
+We compared two different CNN, i.e., Faster R-CNN, and 
+Mask R-CNN in this project to achieve the 
+best performance. 
+LaneNet was suggested by Wang et al.\cite{LaneNet} in 2018. 
+They proposed to cast the lane detection problem as an 
+instance segmentation problem so that it can be trained 
+end-to-end which could better cope with lane changes.
 
-Spatial CNN was proposed by Pan\cite{SpatialCNN} in 2017. They 
-demonstrated
+Spatial CNN was proposed by Pan et al.\cite{SpatialCNN} 
+in 2017. They demonstrated
 
 \subsection{Obstacle Detection}
-R-CNN 
+Prior to the introduction of Region-based Convolutional 
+Neural Networks (R-CNN) suggested by Girshick et al. 
+\cite{RCNN} in 2013, visual recognition tasks has been 
+based considerably on the use of Histograms of Oriented 
+Gradients (HOG)\cite{HOG}, and Scale-Invariant Feature 
+Transform (SIFT)\cite{SIFT}. However, as the recognition of 
+brain occurs in several stages downstream, we could assume 
+that a hierarchical, multi-stage algorithm can do better in 
+recognition task. 
+
+Girshick et al. work on R-CNN showed us a new approach in 
+pattern recognition. Compare to classification of image, 
+recognition needs to localizing the objects first. 
+Traditionally, it is considered as a regression problem. 
+They used selective search to extract around 2000 region 
+proposals. Then, they used a CNN to extract a 
+4096-dimensional feature vector from each region proposal. 
+After that, they computed features by forward propagating
+a mean-subtracted 227 × 227 RGB image through five 
+convolutional layers, and two fully connected layers. At 
+last, they used a Support Vector Machine to classify the 
+feature vectors, and a Bounding-box regression to get the 
+ground truth box. 
+
+We compared two different variants of R-CNN, i.e., 
+Faster R-CNN, and Mask R-CNN in this project to achieve the 
+best performance. 
+
+Faster R-CNN\cite{FasterRCNN} was suggested by Ren et al. 
+in 2015. Similar to R-CNN, Faster R-CNN used CNN to extract 
+features from region proposals, however, unlike R-CNN, 
+Faster R-CNN used a Region Proposal Network (RPN) instead 
+of selective search to localize the region proposals. In 
+addition, a ROI pooling layer was added between RPN and CNN, 
+it is used to collect proposals, and calculate the proposal 
+feature maps to extract features. Besides, Faster R-CNN use 
+fully-connected layer, and softmax to classify the features 
+like Fast R-CNN instead of SVM. 
+
+Mask R-CNN\cite{MaskRCNN} was proposed by He et al. in 2018. 
+As the feature image and original image in Faster R-CNN is 
+mis-alignment due to ROI polling, Mask R-CNN changes ROI 
+polling with ROIAlign. In addition, Mask R-CNN adds a 
+convolutional layer after ROIAlign to predicate the mask. 
 
 
 \section{Distributed System}
 
 \subsection{Message-Oriented Middleware}
 Message-Oriented Middleware or MOM was used to transmit 
-data between each cluster and is the core of the whole 
+data between each cluster, and is the core of the whole 
 distributed system. MOM deliver messages asynchronously 
 which benefits us a a lot. It allow us to remove 
-dependencies between each algorithm and decouple our 
+dependencies between each algorithm, and decouple our 
 program. Moreover, it also increase the reliability of our 
 program, since the system would continue to work even 
 though one or more of the algorithms encountered fatal 
-problems and unable to recover.
+problems, and unable to recover.
 
 Message Queue was used in our program as the MOM. We 
 compared many message queues, including kafka, RabbitMQ, 
@@ -164,9 +213,9 @@ capabilities, a Time To Live limit is set to 1 millisecond.
 
 \subsection{Containerization}
 Containerization has been widely used in many industries. 
-Compare to traditional virtual machine, the performance 
+Compare to traditional virtual machine, the performance, 
 and resources loss are reduced to a large extent benefits 
-from removing the guest OS and hardware virtualization. 
+from removing the guest OS, and hardware virtualization. 
 Moreover, using container would also reduce the effort to 
 deploy in future works. 
 
@@ -181,10 +230,10 @@ with neural networks.
 
 \subsection{Container Orchestration}
 As our application runs on multiple containers, a container 
-orchestration platform which can help us manage and scale 
+orchestration platform which can help us manage, and scale 
 our containers is also necessary. Docker Swarm was tried 
 first as it is built in the Docker CE but soon deprecated 
-since Docker Swarm does not even provide basic heal-checks 
+since Docker Swarm does not even provide basic heal-checks, 
 and auto-rollback. Rancher provides more useful functions, 
 however, since it does not have good support on 
 nvidia-docker, we decided to use Kubernetes as our 
