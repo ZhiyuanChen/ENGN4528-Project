@@ -273,15 +273,9 @@ we chose to use MRCNN in this project to detect objects.
 Message-Oriented Middleware or MOM was used to transmit 
 data between each cluster, and is the core of the whole 
 distributed system. MOM deliver messages asynchronously 
-<<<<<<< HEAD
-which benefits us a a lot. It allow us to remove 
-dependencies between each algorithm, and decouple our 
-program. Moreover, it also increase the reliability of our 
-=======
 which benefits us a lot. It allows us to remove 
 dependencies between each algorithm and decouple our 
 program. Moreover, it also increases the reliability of our 
->>>>>>> origin/patch-1
 program, since the system would continue to work even 
 though one or more of the algorithms encountered fatal 
 problems, and unable to recover.
@@ -318,17 +312,10 @@ with neural networks.
 
 \subsection{Container Orchestration}
 As our application runs on multiple containers, a container 
-<<<<<<< HEAD
-orchestration platform which can help us manage, and scale 
-our containers is also necessary. Docker Swarm was tried 
-first as it is built in the Docker CE but soon deprecated 
-since Docker Swarm does not even provide basic heal-checks, 
-=======
 orchestration platform which can help us manage and scale 
 our containers is also necessary. Docker Swarm was implemented 
 first as it is built in the Docker CE but soon deprecated 
 since Docker Swarm does not provide basic heal-checks 
->>>>>>> origin/patch-1
 and auto-rollback. Rancher provides more useful functions, 
 however, since it does not have good support on 
 nvidia-docker, we decided to use Kubernetes as our 
