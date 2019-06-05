@@ -103,7 +103,7 @@ convert a image from ndarray to byte stream within
 milliseconds. And more importantly, thanks to JPEG 
 algorithm, the size of message is also ideal. 
 
-Therefore, we are managed to reduce the transmission 
+Therefore, we have managed to reduce the transmission 
 latency, i.e. encode image, transmit to worker, decode 
 image, encode image, transmit to manager, within 0.05 seconds.
 
@@ -146,15 +146,15 @@ They proposed to cast the lane detection problem as an
 instance segmentation problem so that it can be trained 
 end-to-end which could better cope with lane changes. 
 They split the image to background and lanes instead of 
-assign different classes to different lanes. By doing so, 
+assigning different classes to different lanes. By doing so, 
 they are able to solve the problems of lane switching and 
 limitation of the number of lanes. They started by binary 
-segment the lane line with background first. They connect 
+segmenting the lane line with background. They connect 
 all ground-truth lane points together to form a connected 
 line per lane so that it works well even though the lane 
 line are occluded by objects like vehicles. Then, they 
 instance segment the lane line with each other using a 
-one-shot method based on distance metric learning. It use a 
+one-shot method based on distance metric learning. It uses a 
 clustering loss function to cluster points into lanes using 
 the distance between pixel embeddings.
  
@@ -196,9 +196,9 @@ Detection Challenge with 96.53\%.
 	\caption{Test run on TuSimple dataset}
 \end{table}
 
-After comparison, we found that SCNN works better than 
+After the comparison, we found that SCNN works better than 
 LaneNet in both speed and accuracy. Thus, we chose to use 
-the SCNN in our project. 
+the SCNN for our project. 
 
 
 \subsection{Obstacle Detection}
@@ -209,12 +209,12 @@ based considerably on the use of Histograms of Oriented
 Gradients (HOG)\cite{HOG}, and Scale-Invariant Feature 
 Transform (SIFT)\cite{SIFT}. However, as the recognition of 
 brain occurs in several stages downstream, we could assume 
-that a hierarchical, multi-stage algorithm can do better in 
-recognition task. 
+that a hierarchical, multi-stage algorithm can perform better in 
+recognition tasks. 
 
 Girshick et al. work on R-CNN showed us a new approach in 
-pattern recognition. Compare to classification of image, 
-recognition needs to localizing the objects first. 
+pattern recognition. Compared to classification of image, 
+recognition needs localizing the objects first. 
 Traditionally, it is considered as a regression problem. 
 They used selective search to extract around 2000 region 
 proposals. Then, they used a CNN to extract a 
@@ -244,7 +244,7 @@ R-CNN, FRCNN used a Region Proposal Network (RPN) instead
 of selective search to localize the region proposals. In 
 addition, a ROI pooling layer was added between RPN and 
 CNN, it is used to collect proposals, and calculate the 
-proposal feature maps to extract features. Besides, FRCNN 
+proposal feature maps to extract features. Besides that, FRCNN 
 use fully-connected layer, and softmax to classify the 
 features like Fast R-CNN instead of SVM. 
 
@@ -269,7 +269,7 @@ convolutional layer after ROIAlign to predicate the mask.
 \end{figure}
 
 Since the MRCNN outputs the result of segmentation and 
-detection in parallel, the result can be better. Thus, 
+detection in parallel, the result has been better. Thus, 
 we chose to use MRCNN in this project to detect objects.
 
 
@@ -307,7 +307,7 @@ from removing the guest OS, and hardware virtualization.
 Moreover, using container would also reduce the effort to 
 deploy in future works. 
 
-Docker, the most popular container platform, are used here 
+Docker, the most popular container platform, is used here 
 in this project to containerize our algorithm. Compare to 
 other containerization strategy, e.g. LXD, Docker focused 
 on running programs instead of a whole system which makes 
@@ -325,19 +325,19 @@ since Docker Swarm does not provide basic heal-checks
 and auto-rollback. Rancher provides more useful functions, 
 however, since it does not have good support on 
 nvidia-docker, we decided to use Kubernetes as our 
-container orchestration platform at last.
+container orchestration platform.
 
 
 \section{Conclusion}
 In this project, we implemented a self-driving assistant 
-program which detects the lane line and objects. We 
-compared different algorithms and used the best performed 
+program which detects the lane lines and objects. We 
+compared different algorithms and have used the best performed 
 model as for now. In addition, with the advanced tools of 
 RabbitMQ, Docker, and Kubernetes, we implemented a 
 distributed system to manage and run our algorithms. We 
 designed this system with proper exception handling and Log 
 system to avoid failures as much as possible and to 
-retrieve exception information in case of extreme situation 
+retrieve exception information in case of extreme situations 
 for future improvements. As a result, our program is able 
 to run with high performance and high availabilities. 
 
