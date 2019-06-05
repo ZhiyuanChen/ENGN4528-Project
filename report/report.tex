@@ -145,11 +145,13 @@ line are occluded by objects like vehicles. Then, they
 instance segment the lane line with each other using a 
 one-shot method based on distance metric learning. It use a 
 clustering loss function to cluster points into lanes using 
-the distance between pixel embeddings. 
+the distance between pixel embeddings.
+ 
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/lanenet}
     \label{fig:example}
+    \caption{Network architecture of LaneNet}
 \end{figure}
 
 Spatial CNN (SCNN) was proposed by Pan et al.
@@ -161,11 +163,27 @@ It allows space information to propagate in the same layer
 and make SCNN much more suitable to recognize structure 
 objects. As a result, Spatial CNN won the TuSimple Lane 
 Detection Challenge with 96.53\%. 
+
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/scnn}
     \label{fig:example}
+    \caption{Network architecture of Spatial CNN}
 \end{figure}
+
+\begin{table}[!htbp]
+	\centering
+	\begin{tabular}{|l|c|c|}
+		\hline 
+		&LaneNet&Spatial CNN\\
+		\hline  
+		Accuracy (\%)&96.4&96.53\\
+		\hline  
+		Speed (fps)&52&90\\
+		\hline 
+	\end{tabular}
+	\caption{Test run on TuSimple dataset}
+\end{table}
 
 After comparison, we found that SCNN works better than 
 LaneNet in both speed and accuracy. Thus, we chose to use 
@@ -196,10 +214,12 @@ convolutional layers, and two fully connected layers. At
 last, they used a Support Vector Machine to classify the 
 feature vectors, and a Bounding-box regression to get the 
 ground truth box. 
+
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/rcnn}
     \label{fig:example}
+    \caption{Network architecture of R-CNN}
 \end{figure}
 
 We compared two different variants of R-CNN, i.e., 
@@ -216,24 +236,30 @@ CNN, it is used to collect proposals, and calculate the
 proposal feature maps to extract features. Besides, FRCNN 
 use fully-connected layer, and softmax to classify the 
 features like Fast R-CNN instead of SVM. 
+
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/frcnn}
     \label{fig:example}
+    \caption{Network architecture of FRCNN}
 \end{figure}
+
 Mask R-CNN\cite{MaskRCNN} (MRCNN) was proposed by He et al. 
 in 2018. As the feature image and original image in Faster 
 R-CNN is mis-alignment due to ROI polling, MRCNN changes ROI 
 polling with ROIAlign. In addition, MRCNN adds a 
 convolutional layer after ROIAlign to predicate the mask. 
+
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/mrcnn}
     \label{fig:example}
+    \caption{Network architecture of mrcnn}
 \end{figure}
-After comparison, we found that MRCNN works better than 
-FRCNN in both speed and accuracy. Thus, we chose to use the 
-MRCNN in our project. 
+
+Since the MRCNN outputs the result of segmentation and 
+detection in parallel, the result can be better. Thus, 
+we chose to use MRCNN in this project to detect objects.
 
 
 \section{Distributed System}
@@ -291,9 +317,122 @@ nvidia-docker, we decided to use Kubernetes as our
 container orchestration platform at last.
 
 
-\section{Conclusions}
+\section{Conclusion}
 
 
+\section{Appendix}
+\begin{figure}[!htb]
+    \minipage{0.32\textwidth}
+      \includegraphics[width=\linewidth]{result/w000059.jpg}
+      \caption{Original Image}\label{fig:Original_Image}
+    \endminipage\hfill
+    \minipage{0.32\textwidth}
+      \includegraphics[width=\linewidth]{result/w000059-lane.jpg}
+      \caption{Lane Detection}\label{fig:Lane_Line_Result}
+    \endminipage\hfill
+    \minipage{0.32\textwidth}%
+      \includegraphics[width=\linewidth]{result/w000059-obj.jpg}
+      \caption{Object Detection}\label{fig:Object_result}
+    \endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000066.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000066-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000066-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000092.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000092-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000092-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000106.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000106-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000106-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000107.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000107-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000107-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000128.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000128-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000128-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000131.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000131-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000131-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
+\begin{figure}[!htb]
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000139.jpg}
+	\caption{Original Image}\label{fig:Original_Image}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}
+	\includegraphics[width=\linewidth]{result/w000139-lane.jpg}
+	\caption{Lane Detection}\label{fig:Lane_Line_Result}
+	\endminipage\hfill
+	\minipage{0.32\textwidth}%
+	\includegraphics[width=\linewidth]{result/w000139-obj.jpg}
+	\caption{Object Detection}\label{fig:Object_result}
+	\endminipage
+\end{figure}
 \clearpage
 
 \bibliographystyle{splncs}
