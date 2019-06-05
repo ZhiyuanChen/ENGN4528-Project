@@ -62,7 +62,7 @@ which detects the lane line and objects in a computer
 simulation environment. 
 
 
-\section{Local Process}
+\section{Manager Process}
 \subsection{Screenshot}
 Taking a screenshot can be harder than it looks. 
 ImageGrab.grab() from PIL is a good approach. However, 
@@ -103,19 +103,25 @@ convert a image from ndarray to byte stream within
 milliseconds. And more importantly, thanks to JPEG 
 algorithm, the size of message is also ideal. 
 
+Therefore, we are managed to reduce the transmission 
+latency, i.e. encode image, transmit to worker, decode 
+image, encode image, transmit to manager, within 0.05 seconds.
+
+\begin{figure}
+    \centering
+    \includegraphics[height=6cm]{reference/latency}
+    \label{fig:MQLatency}
+    \caption{Message Queue Latency}
+\end{figure}
+
 
 \section{Worker Process}
 
 \subsection{Lane Line Detection}
 Lane line detection has always been one of the most 
 important part of self-driving. This is easy to understand 
-<<<<<<< HEAD
-since driving off road usually means crash, and severe 
-injury. 
-=======
 since driving off road usually means car crash and severe 
 injuries. 
->>>>>>> origin/patch-1
 
 Traditionally, we first use affine transformation to obtain 
 the aerial view of the lane line. Then, we use edge 
@@ -155,7 +161,7 @@ the distance between pixel embeddings.
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/lanenet}
-    \label{fig:example}
+    \label{fig:LaneNet}
     \caption{Network architecture of LaneNet}
 \end{figure}
 
@@ -172,7 +178,7 @@ Detection Challenge with 96.53\%.
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/scnn}
-    \label{fig:example}
+    \label{fig:SCNN}
     \caption{Network architecture of Spatial CNN}
 \end{figure}
 
@@ -223,7 +229,7 @@ ground truth box.
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/rcnn}
-    \label{fig:example}
+    \label{fig:RCNN}
     \caption{Network architecture of R-CNN}
 \end{figure}
 
@@ -245,7 +251,7 @@ features like Fast R-CNN instead of SVM.
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/frcnn}
-    \label{fig:example}
+    \label{fig:FRCNN}
     \caption{Network architecture of FRCNN}
 \end{figure}
 
@@ -258,7 +264,7 @@ convolutional layer after ROIAlign to predicate the mask.
 \begin{figure}
     \centering
     \includegraphics[width=8cm]{reference/mrcnn}
-    \label{fig:example}
+    \label{fig:MRCNN}
     \caption{Network architecture of mrcnn}
 \end{figure}
 
@@ -323,6 +329,32 @@ container orchestration platform at last.
 
 
 \section{Conclusion}
+In this project, we implemented a self-driving assistant 
+program which detects the lane line and objects. We 
+compared different algorithms and used the best performed 
+model as for now. In addition, with the advanced tools of 
+RabbitMQ, Docker, and Kubernetes, we implemented a 
+distributed system to manage and run our algorithms. We 
+designed this system with proper exception handling and Log 
+system to avoid failures as much as possible and to 
+retrieve exception information in case of extreme situation 
+for future improvements. As a result, our program is able 
+to run with high performance and high availabilities. 
+
+\subsection{Future Work}
+
+In the future, we would like to improve our algorithms by 
+transfer learning. Besides, we spent 37 milliseconds in 
+average to transmit data between manager and worker, there 
+are still space to improve. 
+
+\subsection{Acknowledgement}
+We would like to offer our sincerest appreciation to 
+Hondong Li, the lecturer and convenor of this course as 
+well as Ziang Cheng, and Kaiyue Lu, the tutor of this 
+course for their help. We would like to appreciate 
+Yu Cui from the Peking University for her continued support, 
+without whom, we could not finish this project. 
 
 
 \section{Appendix}
@@ -439,6 +471,7 @@ container orchestration platform at last.
 	\endminipage
 \end{figure}
 \clearpage
+
 
 \bibliographystyle{splncs}
 \bibliography{bib}

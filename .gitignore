@@ -387,3 +387,4 @@ README.*
 weights.*
 *.h5
 *.pth
+report/report.tex.orig
