@@ -32,7 +32,7 @@ class ObstMaster(Master):
                 cord = result['rois'][i]
                 cv2.rectangle(image, (cord[1], cord[0]), (cord[3], cord[2]), color, 1)
                 font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(image, '{}: {:.3f}'.format(class_names[result['class_ids'][i] - 1], result['scores'][i]),
+                cv2.putText(image, '{}: {:.3f}'.format(class_names[result['class_ids'][i]], result['scores'][i]),
                             (cord[1], cord[0]), font, 0.4, (0, 255, 255), 1, cv2.LINE_AA)
             if show_mask:
                 mask = result['masks'][:, :, i]

@@ -1,4 +1,4 @@
-from globals import Master, load_image, MQ, cv2, time
+from globals import Master, load_image, MQ, cv2
 
 
 class TheMaster(Master):

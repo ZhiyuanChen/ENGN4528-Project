@@ -1,4 +1,4 @@
-from globals import Master, Vernie, traceback, load_image, MQ, cv2
+from globals import Master, load_image, MQ, cv2
 from objects import Truck
 
 

@@ -1,6 +1,6 @@
 from lane import *
 
-from globals import Master, Vernie, traceback, load_image, MQ, NN, cv2
+from globals import Master, load_image, MQ, NN, cv2
 
 
 class LaneMaster(Master):
