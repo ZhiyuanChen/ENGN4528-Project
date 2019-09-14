@@ -1,4 +1,6 @@
 # ENGN4528-2019-Major-Project
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fyc-zc%2FENGN4528-Project.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fyc-zc%2FENGN4528-Project?ref=badge_shield)
+
 
 ##Useage
 
@@ -52,3 +54,7 @@ the result back to obstResponse.
 
 
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fyc-zc%2FENGN4528-Project.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fyc-zc%2FENGN4528-Project?ref=badge_large)
